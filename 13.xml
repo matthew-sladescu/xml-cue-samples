@@ -1,0 +1,26 @@
+<books>
+    <book>
+        <title>title</title>
+        <author>John Doe</author>
+    </book>
+    <book>
+        <title>title2</title>
+        <author>Jane Doe</author>
+    </book>
+    <book>
+        <title>Lord of the rings</title>
+        <author>JRR Tolkien</author>
+        <volume>
+            <title>Fellowship</title>
+            <author>JRR Tolkien</author>
+        </volume>
+        <volume>
+            <title>Two Towers</title>
+            <author>JRR Tolkien</author>
+        </volume>
+        <volume>
+            <title>Return of the King</title>
+            <author>JRR Tolkien</author>
+        </volume>
+    </book>
+</books>

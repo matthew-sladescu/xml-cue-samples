@@ -1,0 +1,7 @@
+<h:table xmlns:h="http://www.w3.org/TR/html4/" xmlns:r="d">
+  <h:tr>
+    <h:td>Apples</h:td>
+    <h:td>Bananas</h:td>
+    <r:td>e3r</r:td>
+  </h:tr>
+</h:table>
