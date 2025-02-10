@@ -251,9 +251,9 @@ Shows how namespaces and associated member elements are modeled
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"h:tr": {
 			"h:td": [
-                { $$content: "Apples"}, 
-                { $$content: "Bananas"}
-            ]
+				{ $$content: "Apples"}, 
+				{ $$content: "Bananas"}
+			]
 		}
 	}
 }
@@ -283,9 +283,9 @@ Shows how XML documents where multiple namespaces are declared are represented, 
 		"$xmlns:r": "d"
 		"h:tr": {
 			"h:td": [
-                { $$content: "Apples"}, 
-                { $$content: "Bananas"}
-            ]
+				{ $$content: "Apples"}, 
+				{ $$content: "Bananas"}
+			]
 			"r:blah": { $$content: "e3r" }
 		}
 	}
@@ -317,9 +317,9 @@ In the example below these are ```h:td``` and ```r:td```
 		"$xmlns:r": "d"
 		"h:tr": {
 			"h:td": [
-                { $$content: "Apples"}, 
-                { $$content :"Bananas"}
-            ]
+				{ $$content: "Apples"}, 
+				{ $$content :"Bananas"}
+			]
 			"r:td": { $$content: "e3r"}
 		}
 	}
