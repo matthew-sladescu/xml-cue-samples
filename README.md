@@ -106,9 +106,9 @@ Shows how the **content** for an element is modeled when an attribute is present
 }
 ```
 
-## 5.xml -> 5.cue : Collection with 1 element
+## 5.xml -> 5.cue : Nested Element
 
-Shows the mapping for a note **collection** with a **single element**.
+Shows the mapping for a nested **note** element within a **notes** element.
 
 *5.xml*
 ```
@@ -156,39 +156,12 @@ Shows how an xml **collection with more than 1 element** is mapped.
 }
 ```
 
-## 7.xml -> 7.cue : Collection when an collection element just has text
 
-Shows how a note collection **simplifies** representation of an element **when no attributes are present**
-
-*7.xml*
-```
-<notes>
-	<note alpha="abcd">hello</note>
-	<note alpha="abcdef">goodbye</note>
-	<note>raw</note>
-</notes>
-```
-
-*7.cue*
-```
-{
-	notes: {
-		note: [{
-			$$content: "hello"
-			$alpha:    "abcd"
-		}, {
-			$$content: "goodbye"
-			$alpha:    "abcdef"
-		}, "raw"]
-	}
-}
-```
-
-## 8.xml -> 8.cue : Mixed text/sub-element content within an element
+## 7.xml -> 7.cue : Mixed text/sub-element content within an element
 
 Shows how **mixed content** within an element is represented. ie: An element that has both text content and nested elements.
 
-*8.xml*
+*7.xml*
 ```
 <notes>
 	<note alpha="abcd">hello</note>
@@ -198,13 +171,13 @@ Shows how **mixed content** within an element is represented. ie: An element tha
 </notes>
 ```
 
-*8.cue*
+*7.cue*
 ```
 {
 	notes: {
 		$$content: """
 			yay
-			\ttfd
+			tfd
 			"""
 		note: [{
 			$$content: "hello"
@@ -217,12 +190,16 @@ Shows how **mixed content** within an element is represented. ie: An element tha
 }
 ```
 
+### Comparison to Badgerfish
 
-## 9.xml -> 9.cue : Interleaving Element types
+- Equivalent: multiple elements with same name form an array, attributes are prefixed with "$" and content is prefixed with "$content".
+
+
+## 8.xml -> 8.cue : Interleaving Element types
 
 Shows how a collection is represented when it has an interleaved element of a different type in the middle.
 
-*9.xml*
+*8.xml*
 ```
 <notes>
 	<note alpha="abcd">hello</note>
@@ -233,7 +210,7 @@ Shows how a collection is represented when it has an interleaved element of a di
 </notes>
 ```
 
-*9.cue*
+*8.cue*
 ```
 {
 	notes: {
@@ -246,18 +223,22 @@ Shows how a collection is represented when it has an interleaved element of a di
 		}, {
 			$$content: "goodbye"
 			$alpha:    "ab"
-		}, "direct"]
-		book: "mybook"
+		}, {
+            $$content: "direct"
+        }]
+		book: {
+            $$content: "direct"
+        }
 	}
 }
 ```
 
 
-## 10.xml -> 10.cue : Namespaces
+## 9.xml -> 9.cue : Namespaces
 
 Shows how namespaces and associated member elements are modeled
 
-*10.xml*
+*9.xml*
 ```
 <h:table xmlns:h="http://www.w3.org/TR/html4/">
   <h:tr>
@@ -267,22 +248,59 @@ Shows how namespaces and associated member elements are modeled
 </h:table>
 ```
 
-*10.cue*
+*9.cue*
 ```
 {
 	"h:table": {
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"h:tr": {
-			"h:td": ["Apples", "Bananas"]
+			"h:td": [
+                { $$content: "Apples"}, 
+                { $$content: "Bananas"}
+            ]
 		}
 	}
 }
 ```
 
 
-## 11.xml -> 11.cue : Mixed Namespaces
+## 10.xml -> 10.cue : Mixed Namespaces
 
 Shows how XML documents where multiple namespaces are declared are represented, and how members elements of these different namespaces are represented in CUE.
+
+*10.xml*
+```
+<h:table xmlns:h="http://www.w3.org/TR/html4/" xmlns:r="d">
+  <h:tr>
+    <h:td>Apples</h:td>
+    <h:td>Bananas</h:td>
+    <r:blah>e3r</r:blah>
+  </h:tr>
+</h:table>
+```
+
+*10.cue*
+```
+{
+	"h:table": {
+		"$xmlns:h": "http://www.w3.org/TR/html4/"
+		"$xmlns:r": "d"
+		"h:tr": {
+			"h:td": [
+                { $$content: "Apples"}, 
+                { $$content: "Bananas"}
+            ]
+			"r:blah": { $$content: "e3r" }
+		}
+	}
+}
+```
+
+
+## 11.xml -> 11.cue : Elements with same name but different namespaces
+
+Shows how elements with the same name, but under different namespaces are represented.
+In the example below these are ```h:td``` and ```r:td```
 
 *11.xml*
 ```
@@ -290,7 +308,7 @@ Shows how XML documents where multiple namespaces are declared are represented, 
   <h:tr>
     <h:td>Apples</h:td>
     <h:td>Bananas</h:td>
-    <r:blah>e3r</r:blah>
+    <r:td>e3r</r:td>
   </h:tr>
 </h:table>
 ```
@@ -302,50 +320,22 @@ Shows how XML documents where multiple namespaces are declared are represented, 
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"$xmlns:r": "d"
 		"h:tr": {
-			"h:td": ["Apples", "Bananas"]
-			"r:blah": "e3r"
+			"h:td": [
+                { $$content: "Apples"}, 
+                { $$content :"Bananas"}
+            ]
+			"r:td": { $$content: "e3r"}
 		}
 	}
 }
 ```
 
 
-## 12.xml -> 12.cue : Elements with same name but different namespaces
-
-Shows how elements with the same name, but under different namespaces are represented.
-In the example below these are ```h:td``` and ```r:td```
-
-*12.xml*
-```
-<h:table xmlns:h="http://www.w3.org/TR/html4/" xmlns:r="d">
-  <h:tr>
-    <h:td>Apples</h:td>
-    <h:td>Bananas</h:td>
-    <r:td>e3r</r:td>
-  </h:tr>
-</h:table>
-```
-
-*12.cue*
-```
-{
-	"h:table": {
-		"$xmlns:h": "http://www.w3.org/TR/html4/"
-		"$xmlns:r": "d"
-		"h:tr": {
-			"h:td": ["Apples", "Bananas"]
-			"r:td": "e3r"
-		}
-	}
-}
-```
-
-
-## 13.xml -> 13.cue : Collection of elements, where elements have optional properties
+## 12.xml -> 12.cue : Collection of elements, where elements have optional properties
 
 Shows how elements of a collection (in this case of type ```book```) having optional properties (here the optional ```volume``` property) are represented in CUE.
 
-*13.xml*
+*12.xml*
 ```
 <books>
     <book>
@@ -375,7 +365,7 @@ Shows how elements of a collection (in this case of type ```book```) having opti
 </books>
 ```
 
-*13.cue*
+*12.cue*
 ```
 {
 	books: {
@@ -403,11 +393,11 @@ Shows how elements of a collection (in this case of type ```book```) having opti
 }
 ```
 
-## 14.xml -> 14.cue : Representing types 
+## 13.xml -> 13.cue : Representing types 
 
 Shows examples of how types are modeled in CUE when element contents look like they have an implicit type.
 
-*16.xml*
+*13.xml*
 ```
 <data>
 	<int>54</int>
@@ -415,15 +405,13 @@ Shows examples of how types are modeled in CUE when element contents look like t
 	<string>hello</string>
 	<bool1>TRUE</bool1>
 	<bool2>true</bool2>
-	<null></null>
 </data>
 ```
 
-*16.cue*
+*13.cue*
 ```
 {
 	data: {
-		"null":   ""
 		"int":    54
 		"float":  43.12
 		"string": "hello"
