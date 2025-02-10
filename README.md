@@ -28,6 +28,9 @@ Shows the mapping for simple XML elements and content.
 }
 ```
 
+### Comparison to Badgerfish 
+- Equivalent: Follows the Badgerfish convention where **element names become object properties**.
+
 ## 2.xml -> 2.cue : Attribute Mapping
 
 Shows how **attributes** are mapped using the "alpha" attribute as an example.
@@ -55,6 +58,10 @@ Shows how **attributes** are mapped using the "alpha" attribute as an example.
 }
 ```
 
+### Comparison to Badgerfish
+- Variation: In Badgerfish, attributes go in properties whose names begin with "@". However, given "@" is reserved for attributes in CUE, we use the "$" prefix instead.
+
+A \$ prefix also works well since, a \$ prefix won't collide with any xml element or attribute names since it is an invalid prefix for xml elements or attributes.
 
 ## 3.xml -> 3.cue : Attribute & Element with same name
 
@@ -84,6 +91,9 @@ Shows what the mapping looks like when an element and an attribute have the same
 	}
 }
 ```
+### Comparison to Badgerfish
+
+- Equivalent: Similar to badgerfish apart from the differing prefix symbol.
 
 ## 4.xml -> 4.cue : Mapping for content when an attribute exists
 
@@ -105,6 +115,9 @@ Shows how the **content** for an element is modeled when an attribute is present
 	}
 }
 ```
+
+### Comparison to Badgerfish
+- Variation: Badgerfish uses a single "$" symbol as the property name to model content. We use "\$$content" as the property name for content to emphasize what the property refers to, which can make it easier to convey CUE constraints on that "\$$content".Double \$$ prevents collision with a property named content.
 
 ## 5.xml -> 5.cue : Nested Element
 
@@ -128,6 +141,10 @@ Shows the mapping for a nested **note** element within a **notes** element.
 	}
 }
 ```
+
+### Comparison to Badgerfish
+- Equivalent: Similar to Badgerfish, nested elements become nested properties.
+
 
 ## 6.xml -> 6.cue : Collection with more than 1 element
 
@@ -155,6 +172,10 @@ Shows how an xml **collection with more than 1 element** is mapped.
 	}
 }
 ```
+
+### Comparison to Badgerfish
+
+- Equivalent: Multiple elements at the same level become array elements. In CUE this also helps with preventing constraint conflicts where multiple properties with the same path could be assigned different values.
 
 
 ## 7.xml -> 7.cue : Mixed text/sub-element content within an element
@@ -190,6 +211,10 @@ Shows how **mixed content** within an element is represented. ie: An element tha
 }
 ```
 
+### Comparison to Badgerfish
+
+- Equivalent: multiple elements with same name form an array, attributes are prefixed with "$" and content is prefixed with "$content".
+
 
 ## 8.xml -> 8.cue : Interleaving Element types
 
@@ -219,16 +244,17 @@ Shows how a collection is represented when it has an interleaved element of a di
 		}, {
 			$$content: "goodbye"
 			$alpha:    "ab"
-		}, {
-			$$content: "direct"
-		}]
+		}, "direct"]
 		book: {
-			$$content: "direct"
-		}
+            $$content: "direct"
+        }
 	}
 }
 ```
 
+### Comparison to Badgerfish
+
+- Equivalent: Multiple elements at the same level become array elements.
 
 ## 9.xml -> 9.cue : Namespaces
 
@@ -251,13 +277,18 @@ Shows how namespaces and associated member elements are modeled
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"h:tr": {
 			"h:td": [
-				{ $$content: "Apples"}, 
-				{ $$content: "Bananas"}
-			]
+                { $$content: "Apples"}, 
+                { $$content: "Bananas"}
+            ]
 		}
 	}
 }
 ```
+
+### Comparison to Badgerfish
+
+- Variation: xml namespace label is represented in the same way as in the xml, to make it easy to write constraints against that xml.
+- Variation: xml namespace label associated with an element is prefixed to that element to make it easier to express constraints for an element within a specific namespace. Within the badgerfish convention, the namespace is a property within the object of that namespace, making it harder to write contraints against.
 
 
 ## 10.xml -> 10.cue : Mixed Namespaces
@@ -283,9 +314,9 @@ Shows how XML documents where multiple namespaces are declared are represented, 
 		"$xmlns:r": "d"
 		"h:tr": {
 			"h:td": [
-				{ $$content: "Apples"}, 
-				{ $$content: "Bananas"}
-			]
+                { $$content: "Apples"}, 
+                { $$content: "Bananas"}
+            ]
 			"r:blah": { $$content: "e3r" }
 		}
 	}
@@ -316,10 +347,7 @@ In the example below these are ```h:td``` and ```r:td```
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"$xmlns:r": "d"
 		"h:tr": {
-			"h:td": [
-				{ $$content: "Apples"}, 
-				{ $$content :"Bananas"}
-			]
+			"h:td": [{ $$content: "Apples"}, { $$content :"Bananas"}]
 			"r:td": { $$content: "e3r"}
 		}
 	}
@@ -389,6 +417,10 @@ Shows how elements of a collection (in this case of type ```book```) having opti
 }
 ```
 
+### Comparison to Badgerfish
+
+- Equivalent: Multiple elements at the same level become array elements.
+
 ## 13.xml -> 13.cue : Representing types 
 
 Shows examples of how types are modeled in CUE when element contents look like they have an implicit type.
@@ -401,6 +433,7 @@ Shows examples of how types are modeled in CUE when element contents look like t
 	<string>hello</string>
 	<bool1>TRUE</bool1>
 	<bool2>true</bool2>
+	<null></null>
 </data>
 ```
 
@@ -408,6 +441,7 @@ Shows examples of how types are modeled in CUE when element contents look like t
 ```
 {
 	data: {
+		"null":   ""
 		"int":    54
 		"float":  43.12
 		"string": "hello"
