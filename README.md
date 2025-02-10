@@ -190,10 +190,6 @@ Shows how **mixed content** within an element is represented. ie: An element tha
 }
 ```
 
-### Comparison to Badgerfish
-
-- Equivalent: multiple elements with same name form an array, attributes are prefixed with "$" and content is prefixed with "$content".
-
 
 ## 8.xml -> 8.cue : Interleaving Element types
 
@@ -224,11 +220,11 @@ Shows how a collection is represented when it has an interleaved element of a di
 			$$content: "goodbye"
 			$alpha:    "ab"
 		}, {
-            $$content: "direct"
-        }]
+			$$content: "direct"
+		}]
 		book: {
-            $$content: "direct"
-        }
+			$$content: "direct"
+		}
 	}
 }
 ```
