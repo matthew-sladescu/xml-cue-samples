@@ -411,7 +411,7 @@ Shows examples of how types are modeled in CUE when element contents look like t
 		"int":    54
 		"float":  43.12
 		"string": "hello"
-		bool1:  "TRUE"
+		bool1:  true
 		bool2:  true
 	}
 }
