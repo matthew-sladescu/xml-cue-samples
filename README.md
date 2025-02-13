@@ -33,13 +33,29 @@ The examples below illustrate each of these rules:
 
 ### 1. Elements
 
+The XML `note` element below maps to the note struct in CUE.
+
 *xml*
 ```
 <note>
-	<to>Tove</to>
-	<from>Jani</from>
-	<heading>Reminder</heading>
-	<body>Don't forget me this weekend!</body>
+</note>
+```
+
+*cue*
+```
+{
+	note: { }
+}
+```
+
+### 2. Nested Elements
+
+Nesting an XML `to` element to the `note` element from the first example results in a nested CUE `to` struct inside the `note` struct.
+
+*xml*
+```
+<note>
+	<to></to>
 </note>
 ```
 
@@ -47,17 +63,146 @@ The examples below illustrate each of these rules:
 ```
 {
 	note: {
-		to: {
-			$: "Tove"
+		to: {}
+	}
+}
+```
+
+### 3. Attributes
+
+The `alpha` attribute of the `note` element in XML below maps to the `$` prefixed `$alpha` property of the `note` struct in CUE.
+
+*xml*
+```
+<note alpha="abcd">
+</note>
+```
+
+*cue*
+```
+{
+	note: {
+		$alpha: "abcd"
+	}
+}
+```
+
+### 4. Content
+
+The content of the `note` XML element below maps to the value of the `$` property of the `note` struct in CUE.
+
+*xml*
+```
+<note alpha="abcd">
+	hello
+</note>
+```
+
+*cue*
+```
+{
+	note: {
+		$alpha: "abcd"
+		$:      "hello"
+	}
+}
+```
+
+### 5. XML Lists
+
+The multiple XML `note` elements at the same level map to a list of `note` structs in CUE.
+
+*xml*
+```
+<notes>
+	<note alpha="abcd">hello</note>
+	<note alpha="abcdef">goodbye</note>
+</notes>
+```
+
+*cue*
+```
+{
+	notes: {
+		note: [{
+			$alpha: "abcd"
+			$:      "hello"
+		}, {
+			$alpha: "abcdef"
+			$:      "goodbye"
+		}]
+	}
+}
+```
+
+### 6 and 7. Namespace Definitions and References
+
+The `h` and `r` XML namespace definitions declared in the `table` XML element are declared as properties of the `h:table` strcut in CUE.
+Note how the namspace prefixed XML element names like `h:table`, `h:tr`, `h:td` and `r:blah` carry across to the key names of their corresponding CUE structs.
+
+*xml*
+```
+<h:table xmlns:h="http://www.w3.org/TR/html4/" xmlns:r="d">
+  <h:tr>
+    <h:td>Apples</h:td>
+    <h:td>Bananas</h:td>
+    <r:blah>e3r</r:blah>
+  </h:tr>
+</h:table>
+```
+
+*cue*
+```
+{
+	"h:table": {
+		"$xmlns:h": "http://www.w3.org/TR/html4/"
+		"$xmlns:r": "d"
+		"h:tr": {
+			"h:td": [{
+				$: "Apples"
+			}, {
+				$: "Bananas"
+			}]
+			"r:blah": {
+				$: "e3r"
+			}
 		}
-		from: {
-			$: "Jani"
+	}
+}
+```
+### 8. Typing
+
+Note how the int, float, string, and boolean types are inferred in the CUE below from the values in the XML element content.
+
+*xml*
+```
+<data>
+	<int>54</int>
+	<float>43.12</float>
+	<string>hello</string>
+	<bool1>TRUE</bool1>
+	<bool2>true</bool2>
+</data>
+```
+
+*cue*
+```
+{
+	data: {
+		int: {
+			$: 54
 		}
-		heading: {
-			$: "Reminder"
+		float: {
+			$: 43.12
 		}
-		body: {
-			$: "Don't forget me this weekend!"
+		string: {
+			$: "hello"
+		}
+		bool1: {
+			$: true
+		}
+		bool2: {
+			$: true
 		}
 	}
 }
