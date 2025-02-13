@@ -20,10 +20,18 @@ Shows the mapping for simple XML elements and content.
 ```
 {
 	note: {
-		to:      "Tove"
-		from:    "Jani"
-		heading: "Reminder"
-		body:    "Don't forget me this weekend!"
+		to: {
+			$: "Tove"
+		}
+		from: {
+			$: "Jani"
+		}
+		heading: {
+			$: "Reminder"
+		}
+		body: {
+			$: "Don't forget me this weekend!"
+		}
 	}
 }
 ```
@@ -46,11 +54,19 @@ Shows how **attributes** are mapped using the "alpha" attribute as an example.
 ```
 {
 	note: {
-		body:    "Don't forget me this weekend!"
-		$alpha:  "abcd"
-		to:      "Tove"
-		from:    "Jani"
-		heading: "Reminder"
+		$alpha: "abcd"
+		to: {
+			$: "Tove"
+		}
+		from: {
+			$: "Jani"
+		}
+		heading: {
+			$: "Reminder"
+		}
+		body: {
+			$: "Don't forget me this weekend!"
+		}
 	}
 }
 ```
@@ -75,12 +91,22 @@ Shows what the mapping looks like when an element and an attribute have the same
 ```
 {
 	note: {
-		alpha:   "efgh"
-		$alpha:  "abcd"
-		to:      "Tove"
-		from:    "Jani"
-		heading: "Reminder"
-		body:    "Don't forget me this weekend!"
+		$alpha: "abcd"
+		to: {
+			$: "Tove"
+		}
+		from: {
+			$: "Jani"
+		}
+		heading: {
+			$: "Reminder"
+		}
+		body: {
+			$: "Don't forget me this weekend!"
+		}
+		alpha: {
+			$: "efgh"
+		}
 	}
 }
 ```
@@ -100,8 +126,8 @@ Shows how the **content** for an element is modeled when an attribute is present
 ```
 {
 	note: {
-		$$content: "hello"
-		$alpha:    "abcd"
+		$alpha: "abcd"
+		$:      "hello"
 	}
 }
 ```
@@ -122,8 +148,8 @@ Shows the mapping for a nested **note** element within a **notes** element.
 {
 	notes: {
 		note: {
-			$$content: "hello"
-			$alpha:    "abcd"
+			$alpha: "abcd"
+			$:      "hello"
 		}
 	}
 }
@@ -146,11 +172,11 @@ Shows how an xml **collection with more than 1 element** is mapped.
 {
 	notes: {
 		note: [{
-			$$content: "hello"
-			$alpha:    "abcd"
+			$alpha: "abcd"
+			$:      "hello"
 		}, {
-			$$content: "goodbye"
-			$alpha:    "abcdef"
+			$alpha: "abcdef"
+			$:      "goodbye"
 		}]
 	}
 }
@@ -175,17 +201,17 @@ Shows how **mixed content** within an element is represented. ie: An element tha
 ```
 {
 	notes: {
-		$$content: """
-			yay
-			tfd
-			"""
 		note: [{
-			$$content: "hello"
-			$alpha:    "abcd"
+			$alpha: "abcd"
+			$:      "hello"
 		}, {
-			$$content: "goodbye"
-			$alpha:    "abcdef"
+			$alpha: "abcdef"
+			$:      "goodbye"
 		}]
+		$: """
+			yay
+			\ttfd
+			"""
 	}
 }
 ```
@@ -211,19 +237,19 @@ Shows how a collection is represented when it has an interleaved element of a di
 {
 	notes: {
 		note: [{
-			$$content: "hello"
-			$alpha:    "abcd"
+			$alpha: "abcd"
+			$:      "hello"
 		}, {
-			$$content: "goodbye"
-			$alpha:    "abcdef"
+			$alpha: "abcdef"
+			$:      "goodbye"
 		}, {
-			$$content: "goodbye"
-			$alpha:    "ab"
+			$alpha: "ab"
+			$:      "goodbye"
 		}, {
-			$$content: "direct"
+			$: "direct"
 		}]
 		book: {
-			$$content: "direct"
+			$: "mybook"
 		}
 	}
 }
@@ -250,10 +276,11 @@ Shows how namespaces and associated member elements are modeled
 	"h:table": {
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"h:tr": {
-			"h:td": [
-				{ $$content: "Apples"}, 
-				{ $$content: "Bananas"}
-			]
+			"h:td": [{
+				$: "Apples"
+			}, {
+				$: "Bananas"
+			}]
 		}
 	}
 }
@@ -282,11 +309,14 @@ Shows how XML documents where multiple namespaces are declared are represented, 
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"$xmlns:r": "d"
 		"h:tr": {
-			"h:td": [
-				{ $$content: "Apples"}, 
-				{ $$content: "Bananas"}
-			]
-			"r:blah": { $$content: "e3r" }
+			"h:td": [{
+				$: "Apples"
+			}, {
+				$: "Bananas"
+			}]
+			"r:blah": {
+				$: "e3r"
+			}
 		}
 	}
 }
@@ -316,11 +346,14 @@ In the example below these are ```h:td``` and ```r:td```
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"$xmlns:r": "d"
 		"h:tr": {
-			"h:td": [
-				{ $$content: "Apples"}, 
-				{ $$content :"Bananas"}
-			]
-			"r:td": { $$content: "e3r"}
+			"h:td": [{
+				$: "Apples"
+			}, {
+				$: "Bananas"
+			}]
+			"r:td": {
+				$: "e3r"
+			}
 		}
 	}
 }
@@ -366,23 +399,47 @@ Shows how elements of a collection (in this case of type ```book```) having opti
 {
 	books: {
 		book: [{
-			title:  "title"
-			author: "John Doe"
+			title: {
+				$: "title"
+			}
+			author: {
+				$: "John Doe"
+			}
 		}, {
-			title:  "title2"
-			author: "Jane Doe"
+			title: {
+				$: "title2"
+			}
+			author: {
+				$: "Jane Doe"
+			}
 		}, {
-			title:  "Lord of the rings"
-			author: "JRR Tolkien"
+			title: {
+				$: "Lord of the rings"
+			}
+			author: {
+				$: "JRR Tolkien"
+			}
 			volume: [{
-				title:  "Fellowship"
-				author: "JRR Tolkien"
+				title: {
+					$: "Fellowship"
+				}
+				author: {
+					$: "JRR Tolkien"
+				}
 			}, {
-				title:  "Two Towers"
-				author: "JRR Tolkien"
+				title: {
+					$: "Two Towers"
+				}
+				author: {
+					$: "JRR Tolkien"
+				}
 			}, {
-				title:  "Return of the King"
-				author: "JRR Tolkien"
+				title: {
+					$: "Return of the King"
+				}
+				author: {
+					$: "JRR Tolkien"
+				}
 			}]
 		}]
 	}
@@ -408,11 +465,22 @@ Shows examples of how types are modeled in CUE when element contents look like t
 ```
 {
 	data: {
-		"int":    54
-		"float":  43.12
-		"string": "hello"
-		bool1:  true
-		bool2:  true
+		int: {
+			$: 54
+		}
+		float: {
+			$: 43.12
+		}
+		string: {
+			$: "hello"
+		}
+		bool1: {
+			$: true
+		}
+		bool2: {
+			$: true
+		}
 	}
 }
+
 ```
