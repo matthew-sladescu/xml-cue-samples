@@ -11,6 +11,7 @@ This mapping in this proposal aims to:
 
 - allow users to write CUE constraints against XML files (XML Support)
 - provide a mapping that makes it easy to understand what a CUE constraint refers to relative to the XML it is describing (Readability)
+- allow one to go back from the mapped json to XML. Order / Attribute order preservation at the same level is not required.
 
 ## Proposed Mapping
 
