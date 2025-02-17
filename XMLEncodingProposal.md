@@ -11,7 +11,7 @@ This mapping in this proposal aims to:
 
 - allow users to write CUE constraints against XML files (XML Support)
 - provide a mapping that makes it easy to understand what a CUE constraint refers to relative to the XML it is describing (Readability)
-- allow one to go back from the mapped json to XML. Order / Attribute order preservation at the same level is not required.
+- allow one to go back from the mapped json to XML. Note: Element / Attribute order preservation at the same level is not required.
 
 ## Proposed Mapping
 
@@ -231,17 +231,122 @@ notes: {
    	quantity:$:int
 }
 ```
-## Alternative Solutions Considered
+## Alternative Conventions Considered
 
-### JML
+Although no current mappings between XML and CUE exist, there are a number of existing mappsings that take XML to JSON, which we take inspiration from.
 
-JML is an acronym for Json Markup Language. This is a documented approach for mapping from XML to JSON.
-Although one of the more popular conventions for this type of mapping, it is too verbose, and uses arrays to model many of the XML constructs. 
-Having to use integer indexes when writing CUE constraints against XML is not as readable as using the names of attributes and elements.
+### Parker and Spark Conventions
 
-## Badgerfish
+The Parker and Spark conventions use a very simplistic model where XML attributes are ignored.
+We wish to maintain attribute information when mapping from XML to CUE, however we take inspiration from this convention of mapping elements to object properties.
 
-Badgerfish is another often cited approach for mapping from XML to JSON.
-It provides a much more simple approach that maps XML elements to structs, and XML attributes to struct properties, much in the same way as the approach described in this proposal. Although this type of mapping makes it much easier to read CUE constraints written against XML, it cannot be fully adopted as some of the prefixes used are reserved in CUE, and the recursive definition of namespaces in the resulting JSON makes it too verbose and difficult to write schemas against.
+### Badgerfish 
+
+The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the majority of the rules in the badgerfish convention, described [here](http://www.sklar.com/badgerfish/), with the modifications below to allow for ampping to CUE and for increased readability:
+
+- XML attributes map to CUE properties starting with a "$" prefix instead of a "@" prefix, given "@" is already reserved in CUE for CUE attributes.
+- The mapping proposed in this document improves readability by not recursively defining namespaces in nested objects, but rather only defining namespaces at the same level where they are declared in XML. 
+
+To illustrate how rcXML simplifies the mapping, we provide the example below (taken from [here](http://www.sklar.com/badgerfish/)):
+
+*xml*
+```
+<alice xmlns="http://some-namespace" xmlns:charlie="http://some-other-namespace"> 
+    <bob>david</bob> 
+    <charlie:edgar>frank</charlie:edgar> 
+</alice>
+```
+
+*Badgerfish*
+```
+{ 
+    alice : 
+    { 
+        bob : 
+        { 
+            $ : "david" , 
+            "@xmlns" : 
+            {
+                charlie : "http://some-other-namespace" , 
+                $ : "http://some-namespace"
+            } 
+        } , 
+        "charlie:edgar" : 
+        { 
+            $ : "frank" , 
+            "@xmlns" : 
+            {
+                "charlie":"http://some-other-namespace", 
+                "$" : "http://some-namespace"
+            } 
+        }, 
+        "@xmlns" : 
+        { 
+            charlie : "http://some-other-namespace", 
+            $ : "http://some-namespace"
+        } 
+    } 
+}
+```
+
+*rcXML*
+```
+{ 
+    alice : 
+    { 
+        "$xmlns:charlie" : "http://some-other-namespace",
+        $xmlns : "http://some-namespace",
+        bob : 
+        { 
+            $ : "david" 
+        }, 
+        "charlie:edgar" : 
+        { 
+            $ : "frank" 
+        }
+    } 
+}
+```
+
+### GData
+
+The [GData convention](https://developers.google.com/gdata/docs/json?csw=1) is similar to Badgerfish, however makes no distincion between identifiers used for elements and those used for attributes. 
+
+Unlike the Badferfish convention, if one were to use this convention to map from XML to CUE, it would mean that it becomes ambiguous whether you are referring to an attribute or to an element when writing a CUE constraint. Further, the rules specified [here](https://developers.google.com/gdata/docs/json?csw=1) do not specify what happens when there is a collision between an element name and an attribute name.
+
+### Abdera 
+
+This convention is similar to the GData convention, however, it uses a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention these array and object labels along with associated indexes to access children makes it too unwieldy to write CUE constraints with. For example:
+
+*XML*
+```
+<note myAttr="attrVal" attrTwo="two">
+	<point>example</point>
+	<sample>other</other>
+</note>
+```
+
+*CUE*
+```
+{
+	note: {
+		attributes:  {
+			myAttr: "attrVal"
+			attrTwo: "example"
+		}
+		children: [ {
+			$
+		}]
+	}		
+
+}
+```
+
+### JsonML 
+
+Short for JSON Markup Language, this convention makes heavy use of arrays to ensure an order-preserving mapping, where each element maps to an array entry, and each attribute also maps to an array entry.
+
+Having to use integer indexes when writing a CUE constraint rather than just simply use the element and attribute identifiers found in the XML makes this mapping too unwieldy to use.
+
 
 
