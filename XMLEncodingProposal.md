@@ -363,4 +363,4 @@ The XML to CUE mapping scenarios required are covered by the examples described 
 
 ## Deployment Plan
 
-We aim to release the first verions of the `rXML` encoding as an "experimental" feature of CUE, which can be switched on via existing `CUE_EXPERIMENT` flag. New releases can bring stability improvements to this encoding, with the encoding coming out of the "experimental" phase once the maintainers have deemed this feature stable. 
+We aim to release the first verions of the `rXML` encoding as an "experimental" feature of CUE, which can be switched on via existing `CUE_EXPERIMENT` flag. New releases can bring stability improvements to this encoding, with the encoding coming out of the "experimental" phase once the maintainers have deemed this feature stable. Examples of other experimental features are the embedding and topological sort features outlined [here](https://github.com/cue-lang/cue/releases/tag/v0.12.0)
