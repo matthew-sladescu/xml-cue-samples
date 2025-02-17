@@ -233,18 +233,20 @@ notes: {
 ```
 ## Alternative Conventions Considered
 
-Although no current mappings between XML and CUE exist, there are a number of existing mappsings that take XML to JSON, which we take inspiration from.
+Although no known mapping conventions from XML to CUE exist, there are a number of known mappsings that take XML to JSON, which we can take inspiration from.
 
 ### Parker and Spark Conventions
 
-The Parker and Spark conventions use a very simplistic model where XML attributes are ignored.
-We wish to maintain attribute information when mapping from XML to CUE, however we take inspiration from this convention of mapping elements to object properties.
+The Parker and Spark conventions use a very simplistic model where XML elements are mapped to object properites, and attributes are ignored.
+
+We wish to maintain attribute information so we cannot use these mapping conventions as a whole.
 
 ### Badgerfish 
 
-The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the majority of the rules in the badgerfish convention, described [here](http://www.sklar.com/badgerfish/), with the modifications below to allow for ampping to CUE and for increased readability:
+The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the majority of the rules in the Badgerfish convention, described [here](http://www.sklar.com/badgerfish/), with the modifications below to allow for mapping to CUE and for increased readability:
 
-- XML attributes map to CUE properties starting with a "$" prefix instead of a "@" prefix, given "@" is already reserved in CUE for CUE attributes.
+- XML attributes map to CUE properties starting with a `$` prefix instead of an `@` prefix, given `@` is already reserved in CUE for CUE attributes.
+  
 - The mapping proposed in this document improves readability by not recursively defining namespaces in nested objects, but rather only defining namespaces at the same level where they are declared in XML. 
 
 To illustrate how rcXML simplifies the mapping, we provide the example below (taken from [here](http://www.sklar.com/badgerfish/)):
@@ -312,41 +314,44 @@ To illustrate how rcXML simplifies the mapping, we provide the example below (ta
 
 The [GData convention](https://developers.google.com/gdata/docs/json?csw=1) is similar to Badgerfish, however makes no distincion between identifiers used for elements and those used for attributes. 
 
-Unlike the Badferfish convention, if one were to use this convention to map from XML to CUE, it would mean that it becomes ambiguous whether you are referring to an attribute or to an element when writing a CUE constraint. Further, the rules specified [here](https://developers.google.com/gdata/docs/json?csw=1) do not specify what happens when there is a collision between an element name and an attribute name.
+Unlike the Badferfish convention, if one were to use this convention to map from XML to CUE, it would mean that it becomes ambiguous whether you are referring to an attribute or to an element when writing a CUE constraint. Further, it is not clear from the rules specified [here](https://developers.google.com/gdata/docs/json?csw=1) what happens when there is a collision between an element name and an attribute name.
 
-### Abdera 
+### Abdera and Cobra
 
-This convention is similar to the GData convention, however, it uses a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention these array and object labels along with associated indexes to access children makes it too unwieldy to write CUE constraints with. For example:
+[These conventions](https://readthedocs.org/projects/xmljson/downloads/pdf/stable/) are similar to the GData convention, however, they use a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention`children` and/or `attributes` in CUE constraints increases verbosity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
 
-*XML*
+*xml*
 ```
 <note myAttr="attrVal" attrTwo="two">
 	<point>example</point>
 	<sample>other</other>
 </note>
 ```
+would map to:
 
-*CUE*
+*cue*
 ```
 {
 	note: {
 		attributes:  {
 			myAttr: "attrVal"
-			attrTwo: "example"
+			attrTwo: "two"
 		}
 		children: [ {
-			$
+			point: "example"
+			sample: "other"
 		}]
 	}		
 
 }
 ```
 
+
 ### JsonML 
 
-Short for JSON Markup Language, this convention makes heavy use of arrays to ensure an order-preserving mapping, where each element maps to an array entry, and each attribute also maps to an array entry.
+Short for JSON Markup Language, [this convention](http://www.jsonml.org/xml/) makes heavy use of arrays to ensure an order-preserving mapping, where each element maps to an array entry, and each attribute also maps to an array entry. An example mapping is shown [here](https://wiki.open311.org/JSON_and_XML_Conversion/).
 
-Having to use integer indexes when writing a CUE constraint rather than just simply use the element and attribute identifiers found in the XML makes this mapping too unwieldy to use.
+Having to use work out (count) integer indexes when writing a CUE constraint rather than just simply using the element and attribute identifiers found in the XML makes this mapping too unwieldy to use.
 
 
 
