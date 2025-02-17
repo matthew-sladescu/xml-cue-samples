@@ -357,4 +357,10 @@ Short for JSON Markup Language, [this convention](http://www.jsonml.org/xml/) ma
 Having to use work out (count) integer indexes when writing a CUE constraint rather than just simply using the element and attribute identifiers found in the XML makes this mapping too unwieldy to use.
 
 
+## Testing Plan
 
+The XML to CUE mapping scenarios required are covered by the examples described [here](https://github.com/matthew-sladescu/xml-cue-samples/tree/XMLEncodingProposal). We will consider the solution complete once it can both decode and encode the examples shown there, along with any other test cases requested by the CUE maintainer team.
+
+## Deployment Plan
+
+We aim to release the first verions of the `rXML` encoding as an "experimental" feature of CUE, which can be switched on via existing `CUE_EXPERIMENT` flag. New releases can bring stability improvements to this encoding, with the encoding coming out of the "experimental" phase once the maintainers have deemed this feature stable. 
