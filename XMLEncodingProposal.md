@@ -7,17 +7,20 @@ Many users would benefit from using CUE with their XML files, however CUE does n
 This document puts forward a proposal for an XML to CUE mapping that can be used to add an XML encoding to CUE.
 
 ## Objectives
-This mapping in this proposal aims to:
+The mapping in this proposal aims to:
 
 - allow users to write CUE constraints against XML files (XML Support)
 - provide a mapping that makes it easy to understand what a CUE constraint refers to relative to the XML it is describing (Readability)
-- allow one to go back from the mapped json to XML. Note: Element / Attribute order preservation at the same level is not required.
+- allow one to go back from the mapped JSON to XML.
+
+## Non-Objective
+- Element / Attribute order preservation at the same level.
 
 ## Proposed Mapping
 
 The proposed mapping follows a convention that is inspired by the [Badgerfish convention](http://www.sklar.com/badgerfish/), with devations for compatibility with CUE and increased readability.
 
-This new mapping will be called `rcXML` and follows the following rules:
+This new mapping will be called `rXML` and follows the rules below:
 
 1. Each XML element maps to a CUE struct, with the struct key being the element name.
 2. Each nested XML element becomes a nested CUE struct.
@@ -27,14 +30,14 @@ This new mapping will be called `rcXML` and follows the following rules:
 4. The text content of an XML element maps to a CUE property keyed as `$`, where that property belongs to the struct that is mapped from the XML content's parent element.
 5. Multiple XML elements at the same level map to multiple CUE structs forming part of a CUE list at that level.
 6. Each XML attribute that defines a namespace maps to a CUE struct property in the same way that other XML attributes are mapped.
-7. When an XML element name contains a namespace label, the corresponding CUE struct property will be keyed by the same name.
+7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
 8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is infered to be either int, float, boolean, null, or string.
 
 The examples below illustrate each of these rules:
 
 ### 1. Elements
 
-The XML `note` element below maps to the note struct in CUE.
+The XML `note` element below maps to the `note` struct in CUE.
 
 *xml*
 ```
@@ -211,7 +214,7 @@ Note how the int, float, string, and boolean types are inferred in the CUE below
 
 ## Example CUE constraints definitions against an XML file
 
-Given an XML file with a set of note elements and a book element like the one shown below, we could write a CUE schema as shown below"
+Given an XML file with a `note` element and a `book` element, we could write a CUE schema to define types as shown below:
 
 XML
 ```
@@ -233,7 +236,7 @@ notes: {
 ```
 ## Alternative Conventions Considered
 
-Although no known mapping conventions from XML to CUE exist, there are a number of known mappsings that take XML to JSON, which we can take inspiration from.
+Although no known conventions exist to map from XML to CUE, there are a number of known mappings that take XML to JSON, which we can take inspiration from.
 
 ### Parker and Spark Conventions
 
@@ -249,7 +252,7 @@ The Badgerfish convention maps elements, attributes, and content from XML to JSO
   
 - The mapping proposed in this document improves readability by not recursively defining namespaces in nested objects, but rather only defining namespaces at the same level where they are declared in XML. 
 
-To illustrate how rcXML simplifies the mapping, we provide the example below (taken from [here](http://www.sklar.com/badgerfish/)):
+To illustrate how rXML simplifies the mapping, we provide the example below (taken from [here](http://www.sklar.com/badgerfish/)):
 
 *xml*
 ```
@@ -291,7 +294,7 @@ To illustrate how rcXML simplifies the mapping, we provide the example below (ta
 }
 ```
 
-*rcXML*
+*rXML*
 ```
 { 
     alice : 
