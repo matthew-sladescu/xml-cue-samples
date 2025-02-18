@@ -4,8 +4,9 @@
 Many users would benefit from using CUE with their XML files, however CUE does not currently have an encoding that supports XML.
 
 ## Purpose of this document
-This document puts forward a proposal for an XML to CUE mapping called `cXML` that can be used to add an XML encoding to CUE. Given there are many approaches for mapping from XML to CUE, this could be one of many XML encodings provided by CUE.
+This document puts forward a proposal for an XML to CUE mapping called `cXML` that can be used to add an XML encoding to CUE. 
 
+Given there are many approaches for mapping from XML to CUE, this could be one of many XML encodings provided by CUE. 
 ## Objectives
 The mapping in this proposal aims to:
 
