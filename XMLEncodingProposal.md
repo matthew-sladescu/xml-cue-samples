@@ -32,10 +32,6 @@ This new mapping will be called `cXML` and follows the rules below:
 6. Each XML attribute that defines a namespace maps to a CUE struct property in the same way that other XML attributes are mapped.
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
 8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is inferred to be either int, float, boolean, null, or string.
-9. When text is interspersed at multiple locations between the sub-element(s) of an XML element, we map this text content to a CUE list as follows. Within an XML element:
-	- the order with which non white-space text appears determines the 0-based **index** of each non white-space text
-	- if there are no sub-elements, then the text in that element is mapped to the value of `$`.
-	- if text is found at more than one index, then the value of `$` is a CUE list. This CUE list contains an indexed collection of text found within that XML element.
 
 ### Sample CUE constraints for XML using `cXML`
 
@@ -241,43 +237,6 @@ Note how the int, float, string, and boolean types are inferred in the CUE below
 }
 ```
 
-### 9. Interspersed text between different sub-elements
-
-When there is text interspersed between different sub-elements, as described in mapping rule 9, then it can be mapped as shown in the example below:
-
-*XML*
-```
-<notes>
-	<note alpha="x">hi</hello>
-	textA
-	<note alpha="abcd">hello</note>
-	textB
-</notes>
-```
-maps to:
-
-*CUE*
-```
-{
-	notes: {
- 		$: ["""
-	textA""", """
-	textB"""],
- 		note: {
-   			$alpha: "abcd"
-      			$: "hello"
-	 	}
-   	}
-}
-```
-
-In the above example, you could write constraints in CUE for the text segments as follows:
-
-```
-notes:$:[=~"^[[:space:]]*textA$", =~"^[[:space:]]*textB$"]
-```
-
-
 ## Alternative Conventions Considered
 
 Although no known conventions exist to map from XML to CUE, there are a number of known mappings that take XML to JSON, which we can take inspiration from.
@@ -399,5 +358,7 @@ Having to work out (count) integer indexes when writing a CUE constraint rather 
 The XML to CUE mapping scenarios required are covered by the examples described [here](https://github.com/matthew-sladescu/xml-cue-samples/tree/XMLEncodingProposal). We will consider the solution complete once it can both decode and encode the examples shown there, along with any other test cases requested by the CUE maintainer team.
 
 ## Deployment Plan
+
+Given there is likely to be more than one XML ecndogin
 
 We aim to release the first versions of the `cXML` encoding as an "experimental" feature of CUE, which can be switched on via existing `CUE_EXPERIMENT` flag. New releases can bring stability improvements to this encoding, with the encoding coming out of the "experimental" phase once the maintainers have deemed this feature stable. Examples of other experimental features are the embedding and topological sort features outlined [here](https://github.com/cue-lang/cue/releases/tag/v0.12.0)
