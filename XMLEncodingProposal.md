@@ -1,26 +1,26 @@
 # XML to CUE Encoding Proposal
 
 ## Problem
-Many users would benefit from using CUE with their XML files, however CUE does not have an encoding that supports XML.
+Many users would benefit from using CUE with their XML files, however CUE does not currently have an encoding that supports XML.
 
 ## Purpose of this document
-This document puts forward a proposal for an XML to CUE mapping that can be used to add an XML encoding to CUE.
+This document puts forward a proposal for an XML to CUE mapping called `cXML` that can be used to add an XML encoding to CUE. Given there are many approaches for mapping from XML to CUE, this could be one of many XML encodings provided by CUE.
 
 ## Objectives
 The mapping in this proposal aims to:
 
 - allow users to write CUE constraints against XML files (XML Support)
 - provide a mapping that makes it easy to understand what a CUE constraint refers to relative to the XML it is describing (Readability)
-- allow one to go back from the mapped JSON to XML.
+- allow one to go back from the mapped CUE to XML.
 
 ## Non-Objective
-- Element / Attribute order preservation at the same level.
+- Order preservation at the same level.
 
 ## Proposed Mapping
 
-The proposed mapping follows a convention that is inspired by the [Badgerfish convention](http://www.sklar.com/badgerfish/), with devations for compatibility with CUE and increased readability.
+The proposed mapping follows a convention that is inspired by the [Badgerfish convention](http://www.sklar.com/badgerfish/), with deviations for compatibility with CUE and increased readability.
 
-This new mapping will be called `rXML` and follows the rules below:
+This new mapping will be called `cXML` and follows the rules below:
 
 1. Each XML element maps to a CUE struct, with the struct key being the element name.
 2. Each nested XML element becomes a nested CUE struct.
@@ -31,21 +31,50 @@ This new mapping will be called `rXML` and follows the rules below:
 5. Multiple XML elements at the same level map to multiple CUE structs forming part of a CUE list at that level.
 6. Each XML attribute that defines a namespace maps to a CUE struct property in the same way that other XML attributes are mapped.
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
-8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is infered to be either int, float, boolean, null, or string.
+8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is inferred to be either int, float, boolean, null, or string.
+9. When text is interspersed at multiple locations between the sub-element(s) of an XML element, we map this text content to a CUE list as follows. Within an XML element:
+	- the order with which non white-space text appears determines the 0-based **index** of each non white-space text
+	- if there are no sub-elements, then the text in that element is mapped to the value of `$`.
+	- if text is found at more than one index, then the value of `$` is a CUE list. This CUE list contains an indexed collection of text found within that XML element.
 
-The examples below illustrate each of these rules:
+### Sample CUE constraints for XML using `cXML`
+
+Using the rules above, one would be able to write CUE constraints for XML as shown below:
+
+Given an XML file with a `note` element and a `book` element, we could write a CUE schema to define types as shown below:
+
+*XML*
+```
+<notes>
+	<note alpha="abcd">hello</note>
+	<quantity>5</quantity>
+</notes>
+```
+
+*CUE constraints*
+```
+//the alpha attribute of notes:note should be a string
+notes: note: $alpha: string
+
+//the text within the notes:quantity element should be an integer
+notes: quantity: $: int
+```
+
+## Mapping examples
+
+The examples below illustrate each of the mapping rules defined above:
 
 ### 1. Elements
 
 The XML `note` element below maps to the `note` struct in CUE.
 
-*xml*
+*XML*
 ```
 <note>
 </note>
 ```
 
-*cue*
+*CUE*
 ```
 {
 	note: { }
@@ -56,14 +85,14 @@ The XML `note` element below maps to the `note` struct in CUE.
 
 Nesting an XML `to` element to the `note` element from the first example results in a nested CUE `to` struct inside the `note` struct.
 
-*xml*
+*XML*
 ```
 <note>
 	<to></to>
 </note>
 ```
 
-*cue*
+*CUE*
 ```
 {
 	note: {
@@ -76,13 +105,13 @@ Nesting an XML `to` element to the `note` element from the first example results
 
 The `alpha` attribute of the `note` element in XML below maps to the `$` prefixed `$alpha` property of the `note` struct in CUE.
 
-*xml*
+*XML*
 ```
 <note alpha="abcd">
 </note>
 ```
 
-*cue*
+*CUE*
 ```
 {
 	note: {
@@ -95,14 +124,14 @@ The `alpha` attribute of the `note` element in XML below maps to the `$` prefixe
 
 The content of the `note` XML element below maps to the value of the `$` property of the `note` struct in CUE.
 
-*xml*
+*XML*
 ```
 <note alpha="abcd">
 	hello
 </note>
 ```
 
-*cue*
+*CUE*
 ```
 {
 	note: {
@@ -116,7 +145,7 @@ The content of the `note` XML element below maps to the value of the `$` propert
 
 The multiple XML `note` elements at the same level map to a list of `note` structs in CUE.
 
-*xml*
+*XML*
 ```
 <notes>
 	<note alpha="abcd">hello</note>
@@ -124,7 +153,7 @@ The multiple XML `note` elements at the same level map to a list of `note` struc
 </notes>
 ```
 
-*cue*
+*CUE*
 ```
 {
 	notes: {
@@ -141,10 +170,10 @@ The multiple XML `note` elements at the same level map to a list of `note` struc
 
 ### 6 and 7. Namespace Definitions and References
 
-The `h` and `r` XML namespace definitions declared in the `table` XML element are declared as properties of the `h:table` strcut in CUE.
-Note how the namspace prefixed XML element names like `h:table`, `h:tr`, `h:td` and `r:blah` carry across to the key names of their corresponding CUE structs.
+The `h` and `r` XML namespace definitions declared in the `table` XML element are declared as properties of the `h:table` struct in CUE.
+Note how the namespace prefixed XML element names like `h:table`, `h:tr`, `h:td` and `r:blah` carry across to the key names of their corresponding CUE structs.
 
-*xml*
+*XML*
 ```
 <h:table xmlns:h="http://www.w3.org/TR/html4/" xmlns:r="d">
   <h:tr>
@@ -155,7 +184,7 @@ Note how the namspace prefixed XML element names like `h:table`, `h:tr`, `h:td` 
 </h:table>
 ```
 
-*cue*
+*CUE*
 ```
 {
 	"h:table": {
@@ -178,7 +207,7 @@ Note how the namspace prefixed XML element names like `h:table`, `h:tr`, `h:td` 
 
 Note how the int, float, string, and boolean types are inferred in the CUE below from the values in the XML element content.
 
-*xml*
+*XML*
 ```
 <data>
 	<int>54</int>
@@ -189,7 +218,7 @@ Note how the int, float, string, and boolean types are inferred in the CUE below
 </data>
 ```
 
-*cue*
+*CUE*
 ```
 {
 	data: {
@@ -212,35 +241,50 @@ Note how the int, float, string, and boolean types are inferred in the CUE below
 }
 ```
 
-## Example CUE constraints definitions against an XML file
+### 9. Interspersed text between different sub-elements
 
-Given an XML file with a `note` element and a `book` element, we could write a CUE schema to define types as shown below:
+When there is text interspersed between different sub-elements, as described in mapping rule 9, then it can be mapped as shown in the example below:
 
-XML
+*XML*
 ```
 <notes>
+	<note alpha="x">hi</hello>
+	textA
 	<note alpha="abcd">hello</note>
-	<quantity>5</quantity>
+	textB
 </notes>
 ```
+maps to:
 
-CUE constraints
+*CUE*
 ```
-notes: {
-	note:{
- 		$alpha: string
-   		$: string
-  	}
-   	quantity:$:int
+{
+	notes: {
+ 		$: ["""
+	textA""", """
+	textB"""],
+ 		note: {
+   			$alpha: "abcd"
+      			$: "hello"
+	 	}
+   	}
 }
 ```
+
+In the above example, you could write constraints in CUE for the text segments as follows:
+
+```
+notes:$:[=~"^[[:space:]]*textA$", =~"^[[:space:]]*textB$"]
+```
+
+
 ## Alternative Conventions Considered
 
 Although no known conventions exist to map from XML to CUE, there are a number of known mappings that take XML to JSON, which we can take inspiration from.
 
 ### Parker and Spark Conventions
 
-The Parker and Spark conventions use a very simplistic model where XML elements are mapped to object properites, and attributes are ignored.
+The Parker and Spark conventions use a very simplistic model where XML elements are mapped to object properties, and attributes are ignored.
 
 We wish to maintain attribute information so we cannot use these mapping conventions as a whole.
 
@@ -252,9 +296,9 @@ The Badgerfish convention maps elements, attributes, and content from XML to JSO
   
 - The mapping proposed in this document improves readability by not recursively defining namespaces in nested objects, but rather only defining namespaces at the same level where they are declared in XML. 
 
-To illustrate how rXML simplifies the mapping, we provide the example below (taken from [here](http://www.sklar.com/badgerfish/)):
+To illustrate how cXML simplifies the mapping, we provide the example below (taken from [here](http://www.sklar.com/badgerfish/)):
 
-*xml*
+*XML*
 ```
 <alice xmlns="http://some-namespace" xmlns:charlie="http://some-other-namespace"> 
     <bob>david</bob> 
@@ -265,65 +309,58 @@ To illustrate how rXML simplifies the mapping, we provide the example below (tak
 *Badgerfish*
 ```
 { 
-    alice : 
-    { 
-        bob : 
-        { 
-            $ : "david" , 
-            "@xmlns" : 
-            {
-                charlie : "http://some-other-namespace" , 
-                $ : "http://some-namespace"
-            } 
-        } , 
-        "charlie:edgar" : 
-        { 
-            $ : "frank" , 
-            "@xmlns" : 
-            {
-                "charlie":"http://some-other-namespace", 
-                "$" : "http://some-namespace"
-            } 
-        }, 
-        "@xmlns" : 
-        { 
-            charlie : "http://some-other-namespace", 
-            $ : "http://some-namespace"
-        } 
-    } 
+	alice: {
+		bob: {
+			$: "david"
+			"@xmlns": {
+				charlie: "http://some-other-namespace"
+				$:       "http://some-namespace"
+			}
+		}
+		"charlie:edgar": {
+			$: "frank"
+			"@xmlns": {
+				charlie: "http://some-other-namespace"
+				$:       "http://some-namespace"
+			}
+		}
+		"@xmlns": {
+			charlie: "http://some-other-namespace"
+			$:       "http://some-namespace"
+		}
+	}
 }
 ```
 
-*rXML*
+*cXML*
 ```
 { 
-    alice : 
-    { 
-        "$xmlns:charlie" : "http://some-other-namespace",
-        $xmlns : "http://some-namespace",
-        bob : 
-        { 
-            $ : "david" 
-        }, 
-        "charlie:edgar" : 
-        { 
-            $ : "frank" 
-        }
-    } 
+	alice: {
+		"$xmlns:charlie": "http://some-other-namespace"
+		$xmlns:           "http://some-namespace"
+		bob: {
+			$: "david"
+		}
+		"charlie:edgar": {
+			$: "frank"
+		}
+	}
 }
 ```
+
+We also extend Badgerfish by adding the 9th mapping rule, which allows us to add CUE constraints around specific text elements where an element has text interspersed between sub-elements.
 
 ### GData
 
-The [GData convention](https://developers.google.com/gdata/docs/json?csw=1) is similar to Badgerfish, however makes no distincion between identifiers used for elements and those used for attributes. 
+The [GData convention](https://developers.google.com/gdata/docs/json?csw=1) is similar to Badgerfish, however makes no distinction between identifiers used for elements and those used for attributes. 
 
-Unlike the Badferfish convention, if one were to use this convention to map from XML to CUE, it would mean that it becomes ambiguous whether you are referring to an attribute or to an element when writing a CUE constraint. Further, it is not clear from the rules specified [here](https://developers.google.com/gdata/docs/json?csw=1) what happens when there is a collision between an element name and an attribute name.
+Unlike the Badgerfish convention, if one were to use this convention to map from XML to CUE, it would mean that it becomes ambiguous whether you are referring to an attribute or to an element when writing a CUE constraint. Further, it is not clear from the rules specified [here](https://developers.google.com/gdata/docs/json?csw=1) what happens when there is a collision between an element name and an attribute name.
 
 ### Abdera and Cobra
 
-[These conventions](https://readthedocs.org/projects/xmljson/downloads/pdf/stable/) are similar to the GData convention, however, they use a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention`children` and/or `attributes` in CUE constraints increases verbosity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
+[These conventions](https://readthedocs.org/projects/xmljson/downloads/pdf/stable/) are similar to the GData convention, however, they use a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention `children` and/or `attributes` in CUE constraints increases verbosity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
 
-*xml*
+*XML*
 ```
 <note myAttr="attrVal" attrTwo="two">
 	<point>example</point>
@@ -332,7 +369,7 @@ Unlike the Badferfish convention, if one were to use this convention to map from
 ```
 would map to:
 
-*cue*
+*CUE*
 ```
 {
 	note: {
@@ -354,7 +391,7 @@ would map to:
 
 Short for JSON Markup Language, [this convention](http://www.jsonml.org/xml/) makes heavy use of arrays to ensure an order-preserving mapping, where each element maps to an array entry, and each attribute also maps to an array entry. An example mapping is shown [here](https://wiki.open311.org/JSON_and_XML_Conversion/).
 
-Having to use work out (count) integer indexes when writing a CUE constraint rather than just simply using the element and attribute identifiers found in the XML makes this mapping too unwieldy to use.
+Having to work out (count) integer indexes when writing a CUE constraint rather than just simply using the element and attribute identifiers found in the XML makes this mapping too unwieldy to use.
 
 
 ## Testing Plan
@@ -363,4 +400,4 @@ The XML to CUE mapping scenarios required are covered by the examples described 
 
 ## Deployment Plan
 
-We aim to release the first verions of the `rXML` encoding as an "experimental" feature of CUE, which can be switched on via existing `CUE_EXPERIMENT` flag. New releases can bring stability improvements to this encoding, with the encoding coming out of the "experimental" phase once the maintainers have deemed this feature stable. Examples of other experimental features are the embedding and topological sort features outlined [here](https://github.com/cue-lang/cue/releases/tag/v0.12.0)
+We aim to release the first versions of the `cXML` encoding as an "experimental" feature of CUE, which can be switched on via existing `CUE_EXPERIMENT` flag. New releases can bring stability improvements to this encoding, with the encoding coming out of the "experimental" phase once the maintainers have deemed this feature stable. Examples of other experimental features are the embedding and topological sort features outlined [here](https://github.com/cue-lang/cue/releases/tag/v0.12.0)
