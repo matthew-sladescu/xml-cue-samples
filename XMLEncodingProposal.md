@@ -252,7 +252,7 @@ We wish to maintain attribute information so we cannot use these mapping convent
 
 The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the majority of the rules in the Badgerfish convention, described [here](http://www.sklar.com/badgerfish/), with the modifications below to allow for mapping to CUE and for increased readability:
 
-- XML attributes map to CUE properties starting with a `$` prefix instead of an `@` prefix, given `@` is already reserved in CUE for CUE attributes.
+- XML attributes map to CUE properties starting with a `$` prefix instead of an `@` prefix, given `@` is already reserved in CUE for CUE attributes. Although we could still use the `@` prefix using quotes in CUE, we do not want to overload the usage of `@` for two concepts (ie: for XML attribute prefixes and for CUE attributes), and using `$` will provide a less verbose notation when quotes do not need to be used.
   
 - The mapping proposed in this document improves readability by not recursively defining namespaces in nested objects, but rather only defining namespaces at the same level where they are declared in XML. 
 
@@ -357,6 +357,14 @@ The XML to CUE mapping scenarios required are covered by the examples described 
 
 ## Deployment Plan
 
-Given there is likely to be more than one XML ecndogin
+The new `cXML` encoding will not be the default XML encoding, but rather an opt-in encoding. Users will be able to access use this from the command line using a command similar to:
 
-We aim to release the first versions of the `cXML` encoding as an "experimental" feature of CUE, which can be switched on via existing `CUE_EXPERIMENT` flag. New releases can bring stability improvements to this encoding, with the encoding coming out of the "experimental" phase once the maintainers have deemed this feature stable. Examples of other experimental features are the embedding and topological sort features outlined [here](https://github.com/cue-lang/cue/releases/tag/v0.12.0)
+`cue vet schema.cue xml+cxml: data.xml`
+
+Given this is not the default encoding, the command below would not work:
+
+`cue vet schema.cue data.xml`
+
+This will initially be an experimental encoding, which will be specified in the documentation, however given that it requires opt-in when the xml encoding to be used is specified (as shown above), it does not need to be toggled using the `CUE_EXPERIMENT` variable as other experimental features are.
+
+We also note that embedded XML will not be supported on day 1.
