@@ -252,7 +252,7 @@ We wish to maintain attribute information so we cannot use these mapping convent
 
 The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the majority of the rules in the Badgerfish convention, described [here](http://www.sklar.com/badgerfish/), with the modifications below to allow for mapping to CUE and for increased readability:
 
-- XML attributes map to CUE properties starting with a `$` prefix instead of an `@` prefix, given `@` is already reserved in CUE for CUE attributes. Although we could still use the `@` prefix using quotes in CUE, we do not want to overload the usage of `@` for two concepts (ie: for XML attribute prefixes and for CUE attributes), and using `$` will provide a less verbose notation when quotes do not need to be used.
+- XML attributes map to CUE properties starting with a `$` prefix instead of an `@` prefix, given `@` is already reserved in CUE for CUE attributes. Although we could still use the `@` prefix using quotes in CUE, we do not want to overload the usage of `@` for two concepts (ie: for XML attribute prefixes and for CUE attributes). Using the `$` prefix will also provide a less verbose notation given quotes do not need to be used with this prefix.
 
 - For namespaces, we do note recursively define namespaces in nested objects as this would un-necessarily increase verbosity in the mapped CUE. Instead we align more closely to how namespaces are defined in the XML, and only define namespaces in the CUE at the same level as they are declared in the XML. 
 
