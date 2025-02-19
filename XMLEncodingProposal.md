@@ -308,8 +308,6 @@ To illustrate how cXML simplifies the mapping, we provide the example below (tak
 }
 ```
 
-We also extend Badgerfish by adding the 9th mapping rule, which allows us to add CUE constraints around specific text elements where an element has text interspersed between sub-elements.
-
 ### GData
 
 The [GData convention](https://developers.google.com/gdata/docs/json?csw=1) is similar to Badgerfish, however makes no distinction between identifiers used for elements and those used for attributes. 
