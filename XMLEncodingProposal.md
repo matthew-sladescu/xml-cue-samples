@@ -316,7 +316,7 @@ Unlike the Badgerfish convention, if one were to use this convention to map from
 
 ### Abdera and Cobra
 
-[These conventions](https://readthedocs.org/projects/xmljson/downloads/pdf/stable/) are similar to the GData convention, however, they use a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention `children` and/or `attributes` in CUE constraints increases verbosity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
+[These conventions](https://readthedocs.org/projects/xmljson/downloads/pdf/stable/) are similar to the GData convention, however, they use a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention `children` and/or `attributes` in CUE constraints, as well as integer indexes for the `children` array increases verbosity and complexity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
 
 *XML*
 ```
