@@ -314,9 +314,9 @@ The [GData convention](https://developers.google.com/gdata/docs/json?csw=1) is s
 
 Unlike the Badgerfish convention, if one were to use this convention to map from XML to CUE, it would mean that it becomes ambiguous whether you are referring to an attribute or to an element when writing a CUE constraint. Further, it is not clear from the rules specified [here](https://developers.google.com/gdata/docs/json?csw=1) what happens when there is a collision between an element name and an attribute name.
 
-### Abdera and Cobra
+### Abdera 
 
-[These conventions](https://readthedocs.org/projects/xmljson/downloads/pdf/stable/) are similar to the GData convention, however, they use a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention `children` and/or `attributes` in CUE constraints, as well as integer indexes for the `children` array increases verbosity and complexity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
+[This convention](https://wiki.open311.org/JSON_and_XML_Conversion/) is similar to the GData convention, however, it use a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention `children` and/or `attributes` in CUE constraints, as well as integer indexes for arrays increases verbosity and complexity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
 
 *XML*
 ```
@@ -340,7 +340,6 @@ would map to:
 			sample: "other"
 		}]
 	}		
-
 }
 ```
 
