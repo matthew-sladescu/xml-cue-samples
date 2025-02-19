@@ -357,7 +357,7 @@ The XML to CUE mapping scenarios required are covered by the examples described 
 
 ## Deployment Plan
 
-The new `cXML` encoding will not be the default XML encoding, but rather an opt-in encoding. Users will be able to access use this from the command line using a command similar to:
+The new `cXML` encoding will not be the default XML encoding, but rather an opt-in encoding. Users will be able to use this from the command line using a command similar to:
 
 `cue vet schema.cue xml+cxml: data.xml`
 
@@ -367,4 +367,4 @@ Given this is not the default encoding, the command below would not work:
 
 This will initially be an experimental encoding, which will be specified in the documentation, however given that it requires opt-in when the xml encoding to be used is specified (as shown above), it does not need to be toggled using the `CUE_EXPERIMENT` variable as other experimental features are.
 
-We also note that embedded XML will not be supported on day 1.
+We also note that embedded XML within CUE will not be supported on day 1.
