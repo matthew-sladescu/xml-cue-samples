@@ -368,6 +368,6 @@ Given this is not the default encoding, the command below would not work:
 
 `cue vet schema.cue data.xml`
 
-This will initially be an experimental encoding, which will be specified in the documentation, however given that it requires opt-in when the xml encoding to be used is specified (as shown above), it does not need to be toggled using the `CUE_EXPERIMENT` variable as other experimental features are.
+This will initially be an experimental encoding, which will be specified in the documentation, however given that it requires opt-in when the xml encoding to be used is specified, it does not need to be toggled using the `CUE_EXPERIMENT` variable as other experimental features are.
 
 We also note that embedded XML within CUE will not be supported on day 1.
