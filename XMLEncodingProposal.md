@@ -4,7 +4,7 @@
 Many users would benefit from using CUE with their XML files, however CUE does not currently have an encoding that supports XML.
 
 ## Purpose of this document
-This document puts forward a proposal for an XML to CUE mapping called `cXML` that can be used to add an XML encoding to CUE. 
+This document puts forward a proposal for an XML to CUE mapping called `koala` that can be used to add an XML encoding to CUE. 
 
 Given there are many approaches for mapping from XML to CUE, this could be one of many XML encodings provided by CUE. 
 ## Objectives
@@ -21,7 +21,7 @@ The mapping in this proposal aims to:
 
 The proposed mapping follows a convention that is inspired by the [Badgerfish convention](http://www.sklar.com/badgerfish/), with deviations for compatibility with CUE and increased readability.
 
-This new mapping will be called `cXML` and follows the rules below:
+This new mapping will be called `koala` and follows the rules below:
 
 1. Each XML element maps to a CUE struct, with the struct key being the element name.
 2. Each nested XML element becomes a nested CUE struct.
@@ -34,7 +34,7 @@ This new mapping will be called `cXML` and follows the rules below:
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
 8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is inferred to be either int, float, boolean, null, or string.
 
-### Sample CUE constraints for XML using `cXML`
+### Sample CUE constraints for XML using `koala`
 
 Using the rules above, one would be able to write CUE constraints for XML as shown below:
 
@@ -256,7 +256,7 @@ The Badgerfish convention maps elements, attributes, and content from XML to JSO
 
 - For namespaces, we do note recursively define namespaces in nested objects as this would un-necessarily increase verbosity in the mapped CUE. Instead we align more closely to how namespaces are defined in the XML, and only define namespaces in the CUE at the same level as they are declared in the XML. 
 
-To illustrate how cXML simplifies the mapping, we provide the example below (Badgerfish mapping taken from [here](http://www.sklar.com/badgerfish/)):
+To illustrate how koala simplifies the mapping, we provide the example below (Badgerfish mapping taken from [here](http://www.sklar.com/badgerfish/)):
 
 *XML*
 ```
@@ -292,7 +292,7 @@ To illustrate how cXML simplifies the mapping, we provide the example below (Bad
 }
 ```
 
-*cXML*
+*koala*
 ```
 { 
 	alice: {
@@ -357,9 +357,9 @@ The XML to CUE mapping scenarios required are covered by the examples described 
 
 ## Deployment Plan
 
-The new `cXML` encoding will not be the default XML encoding, but rather an opt-in encoding. Users will be able to use this from the command line using a command similar to:
+The new `koala` encoding will not be the default XML encoding, but rather an opt-in encoding. Users will be able to use this from the command line using a command similar to:
 
-`cue vet schema.cue xml+cxml: data.xml`
+`cue vet schema.cue xml+koala: data.xml`
 
 Given this is not the default encoding, the command below would not work:
 
