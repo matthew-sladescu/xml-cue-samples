@@ -6,7 +6,7 @@ Many users would benefit from using CUE with their XML files, however CUE does n
 ## Purpose of this document
 This document puts forward a proposal for an XML to CUE mapping called `koala` that can be used to add an XML encoding to CUE.
 
-Given XML has constructs like namespaces and attributes that don't have identical analogues in CUE, there are many approaches for mapping from XML to CUE, with other future XML encodings possible. Examples of future options could include encodings that use a schema-guided approach (similar to the [textproto](https://pkg.go.dev/cuelang.org/go@v0.12.0/encoding/protobuf/textproto) encoding), and raw low-level AST style encodings that model each XML construct as a node that associates to abstractions like attributes, tags, and other content.
+Given XML has constructs like attributes and namespaces that don't have identical analogues in CUE, there are many approaches for mapping from XML to CUE, with other future XML encodings possible. Examples of future options could include encodings that use a schema-guided approach (similar to the [textproto](https://pkg.go.dev/cuelang.org/go@v0.12.0/encoding/protobuf/textproto) encoding), and raw low-level AST style encodings that model each XML construct as a node that associates to abstractions like attributes, tags, and other content.
 
 ## Objectives
 The mapping in this proposal aims to:
