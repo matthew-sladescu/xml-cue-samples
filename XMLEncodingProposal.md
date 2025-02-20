@@ -356,7 +356,7 @@ Having to work out (count) integer indexes when writing a CUE constraint rather 
 
 ## Testing Plan
 
-The XML to CUE mapping scenarios required are covered by the examples described [here](https://github.com/matthew-sladescu/xml-cue-samples/tree/XMLEncodingProposal). We will consider the solution complete once it can both decode and encode the examples shown there, along with any other test cases requested by the CUE maintainer team.
+The XML to CUE mapping scenarios required are covered by the examples described [here](https://github.com/matthew-sladescu/xml-cue-samples/blob/main/README.md). We will consider the solution complete once it can both decode and encode the examples shown there, along with any other test cases requested by the CUE maintainer team.
 
 ## Deployment Plan
 
