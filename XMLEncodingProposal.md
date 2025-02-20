@@ -29,7 +29,7 @@ This new mapping will be called `koala` and follows the rules below:
 3. Each XML attribute maps to a CUE struct property, where:
    - the property key is the attribute name prefixed with `$`, and
    - the property belongs to the struct that is mapped from the XML attribute's parent element.
-4. The text content of an XML element maps to a CUE property keyed as `$`, where that property belongs to the struct that is mapped from the XML content's parent element.
+4. The text content of an XML element maps to a CUE property keyed as `$$`, where that property belongs to the struct that is mapped from the XML content's parent element.
 5. Multiple XML elements at the same level map to multiple CUE structs forming part of a CUE list at that level.
 6. Each XML attribute that defines a namespace maps to a CUE struct property in the same way that other XML attributes are mapped.
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
@@ -55,7 +55,7 @@ Given an XML file with a `note` element and a `book` element, we could write a C
 notes: note: $alpha: string
 
 //the text within the notes:quantity element should be an integer
-notes: quantity: $: int
+notes: quantity: $$: int
 ```
 
 ## Mapping examples
@@ -120,7 +120,7 @@ The `alpha` attribute of the `note` element in XML below maps to the `$` prefixe
 
 ### 4. Content
 
-The content of the `note` XML element below maps to the value of the `$` property of the `note` struct in CUE.
+The content of the `note` XML element below maps to the value of the `$$` property of the `note` struct in CUE.
 
 *XML*
 ```
@@ -134,7 +134,7 @@ The content of the `note` XML element below maps to the value of the `$` propert
 {
 	note: {
 		$alpha: "abcd"
-		$:      "hello"
+		$$:     "hello"
 	}
 }
 ```
@@ -157,10 +157,10 @@ The multiple XML `note` elements at the same level map to a list of `note` struc
 	notes: {
 		note: [{
 			$alpha: "abcd"
-			$:      "hello"
+			$$:     "hello"
 		}, {
 			$alpha: "abcdef"
-			$:      "goodbye"
+			$$:     "goodbye"
 		}]
 	}
 }
@@ -190,12 +190,12 @@ Note how the namespace prefixed XML element names like `h:table`, `h:tr`, `h:td`
 		"$xmlns:r": "d"
 		"h:tr": {
 			"h:td": [{
-				$: "Apples"
+				$$: "Apples"
 			}, {
-				$: "Bananas"
+				$$: "Bananas"
 			}]
 			"r:blah": {
-				$: "e3r"
+				$$: "e3r"
 			}
 		}
 	}
@@ -221,19 +221,19 @@ Note how the int, float, string, and boolean types are inferred in the CUE below
 {
 	data: {
 		int: {
-			$: 54
+			$$: 54
 		}
 		float: {
-			$: 43.12
+			$$: 43.12
 		}
 		string: {
-			$: "hello"
+			$$: "hello"
 		}
 		bool1: {
-			$: true
+			$$: true
 		}
 		bool2: {
-			$: true
+			$$: true
 		}
 	}
 }
@@ -251,13 +251,15 @@ We wish to maintain attribute information so we cannot use these mapping convent
 
 ### Badgerfish 
 
-The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the majority of the rules in the Badgerfish convention, described [here](http://www.sklar.com/badgerfish/), with the modifications below to allow for mapping to CUE and for increased readability:
+The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the many of the rules in the Badgerfish convention, described [here](http://www.sklar.com/badgerfish/), with the modifications below to allow for mapping to CUE and for increased readability:
 
 - XML attributes map to CUE properties starting with a `$` prefix instead of an `@` prefix, given `@` is already reserved in CUE for CUE attributes. Although we could still use the `@` prefix using quotes in CUE, we do not want to overload the usage of `@` for two concepts (ie: for XML attribute prefixes and for CUE attributes). Using the `$` prefix will also provide a less verbose notation given quotes do not need to be used with this prefix.
 
+- Given a single `$` is [not a valid identifier in CUE](https://cuelang.org/docs/reference/spec/#identifiers), we use `$$` as the property to model element text content instead of `$`.
+
 - For namespaces, we do note recursively define namespaces in nested objects as this would un-necessarily increase verbosity in the mapped CUE. Instead we align more closely to how namespaces are defined in the XML, and only define namespaces in the CUE at the same level as they are declared in the XML. 
 
-To illustrate how koala simplifies the mapping, we provide the example below (Badgerfish mapping taken from [here](http://www.sklar.com/badgerfish/)):
+To illustrate how `koala` simplifies the mapping, we provide the example below (Badgerfish mapping taken from [here](http://www.sklar.com/badgerfish/)):
 
 *XML*
 ```
@@ -300,10 +302,10 @@ To illustrate how koala simplifies the mapping, we provide the example below (Ba
 		"$xmlns:charlie": "http://some-other-namespace"
 		$xmlns:           "http://some-namespace"
 		bob: {
-			$: "david"
+			$$: "david"
 		}
 		"charlie:edgar": {
-			$: "frank"
+			$$: "frank"
 		}
 	}
 }
@@ -317,7 +319,7 @@ Unlike the Badgerfish convention, if one were to use this convention to map from
 
 ### Abdera 
 
-[This convention](https://wiki.open311.org/JSON_and_XML_Conversion/) is similar to the GData convention, however, it use a "children" array and "attributes" object when both nested XML elements and attributes are mentioned. Having to mention `children` and/or `attributes` in CUE constraints, as well as integer indexes for arrays increases verbosity and complexity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
+[This convention](https://wiki.open311.org/JSON_and_XML_Conversion/) is similar to the GData convention, however, it uses separate `children` and `attribute` abstractions when both nested XML elements and attributes are mentioned. Having to mention `children` and/or `attributes` in CUE constraints, as well as integer indexes for `children` arrays increases verbosity and complexity, which goes against the readability objective of this paper. To illustrate this with an example for Abdera:
 
 *XML*
 ```
@@ -349,7 +351,7 @@ would map to:
 
 Short for JSON Markup Language, [this convention](http://www.jsonml.org/xml/) makes heavy use of arrays to ensure an order-preserving mapping, where each element maps to an array entry, and each attribute also maps to an array entry. An example mapping is shown [here](https://wiki.open311.org/JSON_and_XML_Conversion/).
 
-Having to work out (count) integer indexes when writing a CUE constraint rather than just simply using the element and attribute identifiers found in the XML makes this mapping too unwieldy to use.
+Having to work out (count) integer indexes when writing a CUE constraint rather than just simply using the element and attribute identifiers found in the XML makes this mapping too unwieldy to use for the purposes of our mapping.
 
 
 ## Testing Plan
