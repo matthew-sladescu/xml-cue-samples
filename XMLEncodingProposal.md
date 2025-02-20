@@ -4,9 +4,9 @@
 Many users would benefit from using CUE with their XML files, however CUE does not currently have an encoding that supports XML.
 
 ## Purpose of this document
-This document puts forward a proposal for an XML to CUE mapping called `koala` that can be used to add an XML encoding to CUE. 
+This document puts forward a proposal for an XML to CUE mapping called `koala` that can be used to add an XML encoding to CUE, aiming to satisfy the objectives listed in the next section. 
 
-Given there are many approaches for mapping from XML to CUE, this could be one of many XML encodings provided by CUE. Examples of other future encoding options could include ones that use a schema-led encoding approach (similar to the [textproto](https://pkg.go.dev/cuelang.org/go@v0.12.0/encoding/protobuf/textproto) encoding approach), and raw low-level AST style mappings that model each XML construct as a node that associates to abstractions like attributes, tags, and other content. This mapping however aims to maximise readability of CUE constraints written against XML, alongside the other objectives mentioned below.
+Given there are many approaches for mapping from XML to CUE however, there could also be other encodings introduced that aim to satisfy other objectives. Examples of other future encoding options could include ones that use a schema-led encoding approach (similar to the [textproto](https://pkg.go.dev/cuelang.org/go@v0.12.0/encoding/protobuf/textproto) encoding), and raw low-level AST style encodings that model each XML construct as a node that associates to abstractions like attributes, tags, and other content. 
 
 ## Objectives
 The mapping in this proposal aims to:
