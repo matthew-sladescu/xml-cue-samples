@@ -21,16 +21,16 @@ Shows the mapping for simple XML elements and content.
 {
 	note: {
 		to: {
-			$: "Tove"
+			$$: "Tove"
 		}
 		from: {
-			$: "Jani"
+			$$: "Jani"
 		}
 		heading: {
-			$: "Reminder"
+			$$: "Reminder"
 		}
 		body: {
-			$: "Don't forget me this weekend!"
+			$$: "Don't forget me this weekend!"
 		}
 	}
 }
@@ -56,16 +56,16 @@ Shows how **attributes** are mapped using the "alpha" attribute as an example.
 	note: {
 		$alpha: "abcd"
 		to: {
-			$: "Tove"
+			$$: "Tove"
 		}
 		from: {
-			$: "Jani"
+			$$: "Jani"
 		}
 		heading: {
-			$: "Reminder"
+			$$: "Reminder"
 		}
 		body: {
-			$: "Don't forget me this weekend!"
+			$$: "Don't forget me this weekend!"
 		}
 	}
 }
@@ -93,19 +93,19 @@ Shows what the mapping looks like when an element and an attribute have the same
 	note: {
 		$alpha: "abcd"
 		to: {
-			$: "Tove"
+			$$: "Tove"
 		}
 		from: {
-			$: "Jani"
+			$$: "Jani"
 		}
 		heading: {
-			$: "Reminder"
+			$$: "Reminder"
 		}
 		body: {
-			$: "Don't forget me this weekend!"
+			$$: "Don't forget me this weekend!"
 		}
 		alpha: {
-			$: "efgh"
+			$$: "efgh"
 		}
 	}
 }
@@ -127,7 +127,7 @@ Shows how the **content** for an element is modeled when an attribute is present
 {
 	note: {
 		$alpha: "abcd"
-		$:      "hello"
+		$$:     "hello"
 	}
 }
 ```
@@ -149,7 +149,7 @@ Shows the mapping for a nested **note** element within a **notes** element.
 	notes: {
 		note: {
 			$alpha: "abcd"
-			$:      "hello"
+			$$:     "hello"
 		}
 	}
 }
@@ -173,55 +173,20 @@ Shows how an xml **collection with more than 1 element** is mapped.
 	notes: {
 		note: [{
 			$alpha: "abcd"
-			$:      "hello"
+			$$:     "hello"
 		}, {
 			$alpha: "abcdef"
-			$:      "goodbye"
+			$$:     "goodbye"
 		}]
 	}
 }
 ```
 
-
-## 7.xml -> 7.cue : Mixed text/sub-element content within an element
-
-Shows how **mixed content** within an element is represented. ie: An element that has both text content and nested elements.
-
-*7.xml*
-```
-<notes>
-	<note alpha="abcd">hello</note>
-	<note alpha="abcdef">goodbye</note>
-	yay
-	tfd
-</notes>
-```
-
-*7.cue*
-```
-{
-	notes: {
-		note: [{
-			$alpha: "abcd"
-			$:      "hello"
-		}, {
-			$alpha: "abcdef"
-			$:      "goodbye"
-		}]
-		$: """
-			yay
-			\ttfd
-			"""
-	}
-}
-```
-
-
-## 8.xml -> 8.cue : Interleaving Element types
+## 7.xml -> 7.cue : Interleaving Element types
 
 Shows how a collection is represented when it has an interleaved element of a different type in the middle.
 
-*8.xml*
+*7.xml*
 ```
 <notes>
 	<note alpha="abcd">hello</note>
@@ -232,35 +197,35 @@ Shows how a collection is represented when it has an interleaved element of a di
 </notes>
 ```
 
-*8.cue*
+*7.cue*
 ```
 {
 	notes: {
 		note: [{
 			$alpha: "abcd"
-			$:      "hello"
+			$$:     "hello"
 		}, {
 			$alpha: "abcdef"
 			$:      "goodbye"
 		}, {
 			$alpha: "ab"
-			$:      "goodbye"
+			$$:     "goodbye"
 		}, {
-			$: "direct"
+			$$:	"direct"
 		}]
 		book: {
-			$: "mybook"
+			$$: 	"mybook"
 		}
 	}
 }
 ```
 
 
-## 9.xml -> 9.cue : Namespaces
+## 8.xml -> 8.cue : Namespaces
 
 Shows how namespaces and associated member elements are modeled
 
-*9.xml*
+*8.xml*
 ```
 <h:table xmlns:h="http://www.w3.org/TR/html4/">
   <h:tr>
@@ -270,16 +235,16 @@ Shows how namespaces and associated member elements are modeled
 </h:table>
 ```
 
-*9.cue*
+*8.cue*
 ```
 {
 	"h:table": {
 		"$xmlns:h": "http://www.w3.org/TR/html4/"
 		"h:tr": {
 			"h:td": [{
-				$: "Apples"
+				$$: "Apples"
 			}, {
-				$: "Bananas"
+				$$: "Bananas"
 			}]
 		}
 	}
@@ -287,9 +252,46 @@ Shows how namespaces and associated member elements are modeled
 ```
 
 
-## 10.xml -> 10.cue : Mixed Namespaces
+## 9.xml -> 9.cue : Mixed Namespaces
 
 Shows how XML documents where multiple namespaces are declared are represented, and how members elements of these different namespaces are represented in CUE.
+
+*9.xml*
+```
+<h:table xmlns:h="http://www.w3.org/TR/html4/" xmlns:r="d">
+  <h:tr>
+    <h:td>Apples</h:td>
+    <h:td>Bananas</h:td>
+    <r:blah>e3r</r:blah>
+  </h:tr>
+</h:table>
+```
+
+*9.cue*
+```
+{
+	"h:table": {
+		"$xmlns:h": "http://www.w3.org/TR/html4/"
+		"$xmlns:r": "d"
+		"h:tr": {
+			"h:td": [{
+				$$: "Apples"
+			}, {
+				$$: "Bananas"
+			}]
+			"r:blah": {
+				$$: "e3r"
+			}
+		}
+	}
+}
+```
+
+
+## 10.xml -> 10.cue : Elements with same name but different namespaces
+
+Shows how elements with the same name, but under different namespaces are represented.
+In the example below these are ```h:td``` and ```r:td```
 
 *10.xml*
 ```
@@ -297,7 +299,7 @@ Shows how XML documents where multiple namespaces are declared are represented, 
   <h:tr>
     <h:td>Apples</h:td>
     <h:td>Bananas</h:td>
-    <r:blah>e3r</r:blah>
+    <r:td>e3r</r:td>
   </h:tr>
 </h:table>
 ```
@@ -310,49 +312,12 @@ Shows how XML documents where multiple namespaces are declared are represented, 
 		"$xmlns:r": "d"
 		"h:tr": {
 			"h:td": [{
-				$: "Apples"
+				$$: "Apples"
 			}, {
-				$: "Bananas"
-			}]
-			"r:blah": {
-				$: "e3r"
-			}
-		}
-	}
-}
-```
-
-
-## 11.xml -> 11.cue : Elements with same name but different namespaces
-
-Shows how elements with the same name, but under different namespaces are represented.
-In the example below these are ```h:td``` and ```r:td```
-
-*11.xml*
-```
-<h:table xmlns:h="http://www.w3.org/TR/html4/" xmlns:r="d">
-  <h:tr>
-    <h:td>Apples</h:td>
-    <h:td>Bananas</h:td>
-    <r:td>e3r</r:td>
-  </h:tr>
-</h:table>
-```
-
-*11.cue*
-```
-{
-	"h:table": {
-		"$xmlns:h": "http://www.w3.org/TR/html4/"
-		"$xmlns:r": "d"
-		"h:tr": {
-			"h:td": [{
-				$: "Apples"
-			}, {
-				$: "Bananas"
+				$$: "Bananas"
 			}]
 			"r:td": {
-				$: "e3r"
+				$$: "e3r"
 			}
 		}
 	}
@@ -360,11 +325,11 @@ In the example below these are ```h:td``` and ```r:td```
 ```
 
 
-## 12.xml -> 12.cue : Collection of elements, where elements have optional properties
+## 11.xml -> 11.cue : Collection of elements, where elements have optional properties
 
 Shows how elements of a collection (in this case of type ```book```) having optional properties (here the optional ```volume``` property) are represented in CUE.
 
-*12.xml*
+*11.xml*
 ```
 <books>
     <book>
@@ -394,51 +359,51 @@ Shows how elements of a collection (in this case of type ```book```) having opti
 </books>
 ```
 
-*12.cue*
+*11.cue*
 ```
 {
 	books: {
 		book: [{
 			title: {
-				$: "title"
+				$$: "title"
 			}
 			author: {
-				$: "John Doe"
+				$$: "John Doe"
 			}
 		}, {
 			title: {
-				$: "title2"
+				$$: "title2"
 			}
 			author: {
-				$: "Jane Doe"
+				$$: "Jane Doe"
 			}
 		}, {
 			title: {
-				$: "Lord of the rings"
+				$$: "Lord of the rings"
 			}
 			author: {
-				$: "JRR Tolkien"
+				$$: "JRR Tolkien"
 			}
 			volume: [{
 				title: {
-					$: "Fellowship"
+					$$: "Fellowship"
 				}
 				author: {
-					$: "JRR Tolkien"
+					$$: "JRR Tolkien"
 				}
 			}, {
 				title: {
-					$: "Two Towers"
+					$$: "Two Towers"
 				}
 				author: {
-					$: "JRR Tolkien"
+					$$: "JRR Tolkien"
 				}
 			}, {
 				title: {
-					$: "Return of the King"
+					$$: "Return of the King"
 				}
 				author: {
-					$: "JRR Tolkien"
+					$$: "JRR Tolkien"
 				}
 			}]
 		}]
@@ -446,11 +411,11 @@ Shows how elements of a collection (in this case of type ```book```) having opti
 }
 ```
 
-## 13.xml -> 13.cue : Representing types 
+## 12.xml -> 12.cue : Representing types 
 
 Shows examples of how types are modeled in CUE when element contents look like they have an implicit type.
 
-*13.xml*
+*12.xml*
 ```
 <data>
 	<int>54</int>
@@ -461,24 +426,24 @@ Shows examples of how types are modeled in CUE when element contents look like t
 </data>
 ```
 
-*13.cue*
+*12.cue*
 ```
 {
 	data: {
 		int: {
-			$: 54
+			$$: 54
 		}
 		float: {
-			$: 43.12
+			$$: 43.12
 		}
 		string: {
-			$: "hello"
+			$$: "hello"
 		}
 		bool1: {
-			$: true
+			$$: true
 		}
 		bool2: {
-			$: true
+			$$: true
 		}
 	}
 }
