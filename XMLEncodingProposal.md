@@ -13,10 +13,10 @@ The mapping in this proposal aims to:
 
 - allow users to write CUE constraints against XML files (XML Support)
 - provide a mapping that makes it easy to understand what a CUE constraint refers to relative to the XML it is describing (Readability)
-- allow one to go back from the mapped CUE to XML.
+- allow the conversion of an XML file into CUE, and to also go back from CUE to a semantically equivalent XML file.
 
 ## Non-Objective
-- Order preservation at the same level.
+- This mapping does not aim to represent a lossless mapping. It is known for instance that order and XML comments are not preserved.
 
 ## Proposed Mapping
 
@@ -257,7 +257,7 @@ The Badgerfish convention maps elements, attributes, and content from XML to JSO
 
 - Given a single `$` is [not a valid identifier in CUE](https://cuelang.org/docs/reference/spec/#identifiers), we use `$$` as the property to model element text content instead of `$`.
 
-- For namespaces, we do note recursively define namespaces in nested objects as this would un-necessarily increase verbosity in the mapped CUE. Instead we align more closely to how namespaces are defined in the XML, and only define namespaces in the CUE at the same level as they are declared in the XML. 
+- For namespaces, we do not recursively define namespaces in nested objects as this would un-necessarily increase verbosity in the mapped CUE. Instead we align more closely to how namespaces are defined in the XML, and only define namespaces in the CUE at the same level as they are declared in the XML. 
 
 To illustrate how `koala` simplifies the mapping, we provide the example below (Badgerfish mapping taken from [here](http://www.sklar.com/badgerfish/)):
 
@@ -335,11 +335,11 @@ would map to:
 {
 	note: {
 		attributes:  {
-			myAttr: "attrVal"
+			myAttr:  "attrVal"
 			attrTwo: "two"
 		}
 		children: [ {
-			point: "example"
+			point:  "example"
 			sample: "other"
 		}]
 	}		
