@@ -48,7 +48,7 @@ If not null, the leading and trailing whitespace of the value are trimmed. In th
 3. a float by [strconv.ParseFloat](https://pkg.go.dev/strconv#example-ParseFloat), then the type is determined to be float.  
 4. a bool by [strconv.ParseBool](https://pkg.go.dev/strconv#ParseBool), then the type is determined to be bool.  
 
-5. If a type is not yet determined, then the type is determiend to be string.  
+5. If a type is not yet determined, then the type is determined to be string.  
 
 
 ### Sample CUE constraints for XML using `koala`
