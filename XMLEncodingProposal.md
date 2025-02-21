@@ -35,7 +35,21 @@ This new mapping will be called `koala` and follows the rules below:
    - the order of structs in the list corresponds to the order of elements at the same level
 6. Each XML attribute that defines a namespace maps to a CUE struct property in the same way that other XML attributes are mapped.
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
-8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is inferred to be either int, float, boolean, null, or string.
+8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is inferred to be either int, float, boolean, null, or string. The type is inferred as described in the next section.
+
+## Type mapping
+Conceptually, the type of a given value is determined as described in the sequence below:
+
+1. If this is an element defined as `xsi:nil="true"` where `xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"`, then the type is determined to be null.
+
+If not null, the leading and trailing whitespace of the value are trimmed. In the order below, if the trimmed string can be converted to:  
+
+2. an integer by [strconv.Atoi](https://pkg.go.dev/strconv#Atoi), then the type is determined to be int.  
+3. a float by [strconv.ParseFloat](https://pkg.go.dev/strconv#example-ParseFloat), then the type is determined to be float.  
+4. a bool by [strconv.ParseBool](https://pkg.go.dev/strconv#ParseBool), then the type is determined to be bool.  
+
+5. If a type is not yet determined, then the type is determiend to be string.  
+
 
 ### Sample CUE constraints for XML using `koala`
 
