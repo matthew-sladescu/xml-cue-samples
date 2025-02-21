@@ -37,7 +37,7 @@ This new mapping will be called `koala` and follows the rules below:
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
 8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is inferred to be either int, float, boolean, null, or string. The type is inferred as described in the next section.
 
-## Type mapping
+### Type mapping
 Conceptually, the type of a given value is inferred as described in the sequence below:
 
 1. If this is an element defined as `xsi:nil="true"` where `xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"`, then the type is inferred to be null.
