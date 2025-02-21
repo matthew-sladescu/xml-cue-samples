@@ -16,7 +16,7 @@ The mapping in this proposal aims to:
 - allow the conversion of an XML file into CUE, and to also go back from CUE to a semantically equivalent XML file.
 
 ## Non-Objective
-- This mapping does not aim to represent a lossless mapping. It is known for instance that unless otherwise specified in the rules below, order and XML comments are not preserved.
+- This mapping does not aim to represent a lossless mapping. It is known for instance that order and XML comments are not preserved.
 
 ## Proposed Mapping
 
@@ -30,9 +30,7 @@ This new mapping will be called `koala` and follows the rules below:
    - the property key is the attribute name prefixed with `$`, and
    - the property belongs to the struct that is mapped from the XML attribute's parent element.
 4. The text content of an XML element maps to a CUE property keyed as `$$`, where that property belongs to the struct that is mapped from the XML content's parent element.
-5. Multiple XML elements at the same level with the same tag text map to multiple CUE structs forming part of a CUE list at that level. When this is the case:
-   - the tag text is used as the property key of the list
-   - the order of structs in the list corresponds to the order of elements at the same level
+5. Multiple XML elements at the same level map to multiple CUE structs forming part of a CUE list at that level.
 6. Each XML attribute that defines a namespace maps to a CUE struct property in the same way that other XML attributes are mapped.
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
 8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is inferred to be either int, float, boolean, null, or string.
@@ -237,9 +235,6 @@ Note how the int, float, string, and boolean types are inferred in the CUE below
 		bool2: {
 			$$: true
 		}
-		name: {
-			$$: null
-		}
 	}
 }
 ```
@@ -260,9 +255,11 @@ The Badgerfish convention maps elements, attributes, and content from XML to JSO
 
 - XML attributes map to CUE properties starting with a `$` prefix instead of an `@` prefix, given `@` is already reserved in CUE for CUE attributes. Although we could still use the `@` prefix using quotes in CUE, we do not want to overload the usage of `@` for two concepts (ie: for XML attribute prefixes and for CUE attributes). Using the `$` prefix will also provide a less verbose notation given quotes do not need to be used with this prefix.
 
-- Given a single `$` is [not a valid identifier in CUE](https://cuelang.org/docs/reference/spec/#identifiers), we use `$$` as the property to model element text content instead of `$`. Although we could use a quoted `"$"` as the key, we avoid this to prevent ambiguity with usage of `$` in other contexts, (such as "root element" in JSONPath), and to minimize usage of quotes.
+- Given a single `$` is [not a valid identifier in CUE](https://cuelang.org/docs/reference/spec/#identifiers), we use `$$` as the property to model element text content instead of `$`.
 
-- For namespaces, we do not recursively define namespaces in nested objects as this would un-necessarily increase verbosity in the mapped CUE. Instead we align more closely to how namespaces are defined in the XML, and only define namespaces in the CUE at the same level as they are declared in the XML. To illustrate how `koala` simplifies the mapping, we provide the example below (Badgerfish mapping taken from [here](http://www.sklar.com/badgerfish/)):
+- For namespaces, we do not recursively define namespaces in nested objects as this would un-necessarily increase verbosity in the mapped CUE. Instead we align more closely to how namespaces are defined in the XML, and only define namespaces in the CUE at the same level as they are declared in the XML. 
+
+To illustrate how `koala` simplifies the mapping, we provide the example below (Badgerfish mapping taken from [here](http://www.sklar.com/badgerfish/)):
 
 *XML*
 ```
