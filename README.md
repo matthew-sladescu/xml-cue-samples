@@ -411,41 +411,4 @@ Shows how elements of a collection (in this case of type ```book```) having opti
 }
 ```
 
-## 12.xml -> 12.cue : Representing types 
-
-Shows examples of how types are modeled in CUE when element contents look like they have an implicit type.
-
-*12.xml*
-```
-<data>
-	<int>54</int>
-	<float>43.12</float>
-	<string>hello</string>
-	<bool1>TRUE</bool1>
-	<bool2>true</bool2>
-</data>
-```
-
-*12.cue*
-```
-{
-	data: {
-		int: {
-			$$: 54
-		}
-		float: {
-			$$: 43.12
-		}
-		string: {
-			$$: "hello"
-		}
-		bool1: {
-			$$: true
-		}
-		bool2: {
-			$$: true
-		}
-	}
-}
-
 ```
