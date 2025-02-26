@@ -35,7 +35,7 @@ This new mapping will be called `koala` and follows the rules below:
    - the order of structs in the list corresponds to the order of elements at the same level
 6. Each XML attribute that defines a namespace maps to a CUE struct property in the same way that other XML attributes are mapped.
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
-8. Values of XML attributes and elements will be typed in the corresponding CUE value when the type is inferred to be either int, float, boolean, null, or string.
+8. XML element and attribute values are mapped to strings.
 
 ### Sample CUE constraints for XML using `koala`
 
@@ -56,8 +56,8 @@ Given an XML file with a `note` element and a `book` element, we could write a C
 //the alpha attribute of notes:note should be a string
 notes: note: $alpha: string
 
-//the text within the notes:quantity element should be an integer
-notes: quantity: $$: int
+//the text within the notes:quantity element should represent an integer
+notes: quantity: $$: =~"^[0-9]+$"
 ```
 
 ## Mapping examples
@@ -203,44 +203,33 @@ Note how the namespace prefixed XML element names like `h:table`, `h:tr`, `h:td`
 	}
 }
 ```
-### 8. Typing
 
-Note how the int, float, string, and boolean types are inferred in the CUE below from the values in the XML element content.
+### 8. Element and attribute values
+
+XML element and attribute values map to strings, as shown in the example below.
 
 *XML*
 ```
-<data>
-	<int>54</int>
-	<float>43.12</float>
-	<string>hello</string>
-	<bool1>TRUE</bool1>
-	<bool2>true</bool2>
-</data>
+<notes>
+	<note alpha="true">5</note>
+	<note alpha="abcdef">5.14</note>
+</notes>
 ```
 
 *CUE*
 ```
 {
-	data: {
-		int: {
-			$$: 54
-		}
-		float: {
-			$$: 43.12
-		}
-		string: {
-			$$: "hello"
-		}
-		bool1: {
-			$$: true
-		}
-		bool2: {
-			$$: true
-		}
+	notes: {
+		note: [{
+			$alpha: "true"
+			$$:     "5"
+		}, {
+			$alpha: "abcdef"
+			$$:     "5.14"
+		}]
 	}
 }
 ```
-
 ## Alternative Conventions Considered
 
 Although no known conventions exist to map from XML to CUE, there are a number of known mappings that take XML to JSON, which we can take inspiration from.
@@ -253,7 +242,7 @@ We wish to maintain attribute information so we cannot use these mapping convent
 
 ### Badgerfish 
 
-The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the many of the rules in the Badgerfish convention, described [here](http://www.sklar.com/badgerfish/), with the modifications below to allow for mapping to CUE and for increased readability:
+The Badgerfish convention maps elements, attributes, and content from XML to JSON. We follow the many of the rules in the Badgerfish convention, described [here](http://www.sklar.com/badgerfish/). Notable differences are listed below to allow for mapping to CUE and for increased readability:
 
 - XML attributes map to CUE properties starting with a `$` prefix instead of an `@` prefix, given `@` is already reserved in CUE for CUE attributes. Although we could still use the `@` prefix using quotes in CUE, we do not want to overload the usage of `@` for two concepts (ie: for XML attribute prefixes and for CUE attributes). Using the `$` prefix will also provide a less verbose notation given quotes do not need to be used with this prefix.
 
@@ -352,7 +341,6 @@ would map to:
 Short for JSON Markup Language, [this convention](http://www.jsonml.org/xml/) makes heavy use of arrays to ensure an order-preserving mapping, where each element maps to an array entry, and each attribute also maps to an array entry. An example mapping is shown [here](https://wiki.open311.org/JSON_and_XML_Conversion/).
 
 Having to work out (count) integer indexes when writing a CUE constraint rather than just simply using the element and attribute identifiers found in the XML makes this mapping too unwieldy to use for the purposes of our mapping.
-
 
 ## Testing Plan
 
