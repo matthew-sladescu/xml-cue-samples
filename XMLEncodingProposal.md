@@ -35,7 +35,7 @@ This new mapping will be called `koala` and follows the rules below:
    - the order of structs in the list corresponds to the order of elements at the same level
 6. Each XML attribute that defines a namespace maps to a CUE struct property in the same way that other XML attributes are mapped.
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
-8. XML element and attribute values are mapped to strings.
+8. XML element and attribute values are mapped to strings. Strings are taken as they appear in the XML including any whitespace. For a given element value, if the decoder detects mixed text/sub-element content and the text is anything other than whitespace, then the encoding returns an error. If the text in mixed text/sub-element content is just whitespace, then this whitespace is discarded.
 
 ### Sample CUE constraints for XML using `koala`
 
@@ -212,7 +212,7 @@ XML element and attribute values map to strings, as shown in the example below.
 ```
 <notes>
 	<note alpha="true">5</note>
-	<note alpha="abcdef">5.14</note>
+	<note alpha="abcdef    ">5.14</note>
 </notes>
 ```
 
@@ -224,7 +224,7 @@ XML element and attribute values map to strings, as shown in the example below.
 			$alpha: "true"
 			$$:     "5"
 		}, {
-			$alpha: "abcdef"
+			$alpha: "abcdef    "
 			$$:     "5.14"
 		}]
 	}
