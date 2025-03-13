@@ -37,7 +37,7 @@ This new mapping will be called `koala` and follows the rules below:
 7. When an XML element name includes a namespace label as a prefix, the corresponding CUE struct property will be keyed by the same name and include the same prefix.
 8. XML element and attribute values are mapped to strings. Strings are taken as they appear in the XML including any whitespace, except for the cases below:
    - For a given element value, if the decoder detects mixed text/sub-element content and the text is anything other than whitespace, then the encoding returns an error. If the text in mixed text/sub-element content is just whitespace, then this whitespace is discarded.
-   - In maintaining consistency with the CUE specification [here](https://cuelang.org/docs/reference/spec/#string-and-byte-sequence-literals), carriage return characters (\r) found in a string are discarded from that string.
+   - In maintaining consistency with the CUE specification [here](https://cuelang.org/docs/reference/spec/#string-and-byte-sequence-literals), carriage return characters (`\r`) found in a string are discarded from that string.
 
 ### Sample CUE constraints for XML using `koala`
 
